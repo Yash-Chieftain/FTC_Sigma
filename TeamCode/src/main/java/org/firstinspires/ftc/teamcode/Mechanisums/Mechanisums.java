@@ -81,6 +81,15 @@ public class Mechanisums {
 
    }
 
+   public void startShooter(){
+      shooter.startShooter();
+      intake.startIntake();
+   }
+
+   public void stopShooter(){
+      shooter.stopShooter();
+   }
+   
    public void slowIntake() {
       intake.slowIntake();
    }
