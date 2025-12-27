@@ -28,7 +28,7 @@ public class SpinIndexer {
       };
       leftSpinIndexer = hardwareMap.get(Servo.class, "leftSpinIndexer");
       rightSpinIndexer = hardwareMap.get(Servo.class, "rightSpinIndexer");
-      this.setPosition(1);
+      this.setPosition(0);
    }
 
    public int getCurrentPosition() {

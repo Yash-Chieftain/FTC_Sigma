@@ -91,12 +91,7 @@ public class Test extends LinearOpMode {
 
          if (gamepad2.dpad_up) {
             telemetry.addData("shoot: ", mechanisums.shoot(targetPattern));
-         }
-         else if (gamepad2.right_bumper){
-            mechanisums.startShooter();
-         }
-         else {
-            mechanisums.stopShooter();
+         } else {
             if (gamepad2.left_bumper) {
                mechanisums.startIntake();
             } else {
