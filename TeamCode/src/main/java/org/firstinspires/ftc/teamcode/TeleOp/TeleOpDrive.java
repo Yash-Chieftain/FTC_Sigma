@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Mechanisums.ColorSensing;
 import org.firstinspires.ftc.teamcode.Mechanisums.Intake;
-import org.firstinspires.ftc.teamcode.Mechanisums.Mechanisums;
+import org.firstinspires.ftc.teamcode.Mechanisums.Mechanisms;
 import org.firstinspires.ftc.teamcode.Mechanisums.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisums.SpinIndexer;
 import org.firstinspires.ftc.teamcode.Mechanisums.Vision;
@@ -20,7 +20,6 @@ public class TeleOpDrive extends LinearOpMode {
 
    public static double speed = 0.7;
    public static long movementSleep = 200;
-   public static double rotateMultiplier = 0.5;
 
    SpinIndexer spinIndexer;
    Artifact selectedArtifact;
@@ -28,7 +27,7 @@ public class TeleOpDrive extends LinearOpMode {
    Shooter shooter;
    Vision vision;
 
-   Mechanisums mechanisums;
+   Mechanisms mechanisms;
 
    int index = -1;
    boolean artifactShooted = false;
@@ -39,7 +38,6 @@ public class TeleOpDrive extends LinearOpMode {
       {Artifact.PURPLE, Artifact.PURPLE, Artifact.GREEN},
       {Artifact.PURPLE, Artifact.GREEN, Artifact.PURPLE},
       {Artifact.GREEN, Artifact.PURPLE, Artifact.PURPLE},
-
    };
 
    Artifact[] targetPattern = pattern[0];
@@ -50,7 +48,7 @@ public class TeleOpDrive extends LinearOpMode {
    public void runOpMode() {
 
       // aprilTagYawDetector = new AprilTagYawDetector(hardwareMap, true);
-      mechanisums = new Mechanisums(hardwareMap);
+
       intake = new Intake(hardwareMap);
       shooter = new Shooter(hardwareMap);
       vision = new Vision(hardwareMap);
@@ -168,24 +166,19 @@ public class TeleOpDrive extends LinearOpMode {
             } else if (gamepad2.dpad_right) {
                targetPattern = pattern[2];
             }
-
          } else {
-            isShootingStarted = !mechanisums.shoot(targetPattern);
+            isShootingStarted = !mechanisms.shoot(targetPattern);
          }
 
 
-         if (gamepad2.dpad_up) {
-            telemetry.addData("shoot: ", mechanisums.shoot(targetPattern));
-         } else if (gamepad2.aWasPressed()) {
-            if (!spinIndexer.getIsCurrentIntake() && !isShootingStarted) {
-               shooter.shoot();
-               spinIndexer.setSectionArtifact(
-                  spinIndexer.getCurrentPosition(),
-                  Artifact.EMPTY
-               );
-            } else {
-               isShootingStarted = false;
-            }
+         if (!spinIndexer.getIsCurrentIntake() && !isShootingStarted) {
+            shooter.shoot();
+            spinIndexer.setSectionArtifact(
+               spinIndexer.getCurrentPosition(),
+               Artifact.EMPTY
+            );
+         } else {
+            isShootingStarted = false;
          }
 
 

@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 
-import androidx.core.view.TintableBackgroundView;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import org.firstinspires.ftc.teamcode.Mechanisums.Mechanisums;
+import org.firstinspires.ftc.teamcode.Mechanisums.Mechanisms;
 import org.firstinspires.ftc.teamcode.Mechanisums.Vision;
 import org.firstinspires.ftc.teamcode.Utils.Artifact;
 
@@ -22,7 +20,7 @@ public class Test extends LinearOpMode {
    Artifact selectedArtifact;
    Vision vision;
 
-   Mechanisums mechanisums;
+   Mechanisms mechanisms;
 
    int index = -1;
    boolean artifactShooted = false;
@@ -42,7 +40,7 @@ public class Test extends LinearOpMode {
    public void runOpMode() {
 
       // aprilTagYawDetector = new AprilTagYawDetector(hardwareMap, true);
-      mechanisums = new Mechanisums(hardwareMap);
+      mechanisms = new Mechanisms(hardwareMap);
       vision = new Vision(hardwareMap);
 
       // Map motors
@@ -90,13 +88,17 @@ public class Test extends LinearOpMode {
 
 
          if (gamepad2.dpad_up) {
-            telemetry.addData("shoot: ", mechanisums.shoot(targetPattern));
+            telemetry.addData("shoot: ", mechanisms.shoot(targetPattern));
          } else {
             if (gamepad2.left_bumper) {
-               mechanisums.startIntake();
+               mechanisms.startIntake();
             } else {
-               mechanisums.slowIntake();
+               mechanisms.slowIntake();
             }
+         }
+
+         if(gamepad2.b){
+            mechanisms.validateArtifacts();
          }
 
 
@@ -122,9 +124,9 @@ public class Test extends LinearOpMode {
          frontRight.setPower(backLeftPower * speed);
          backLeft.setPower(frontRightPower * speed);
          backRight.setPower(backRightPower * speed);
-      mechanisums.update();
-         telemetry.addData("State:", mechanisums.getState());
-         telemetry.addData("Color: ", mechanisums.getColorSensorValues());
+      mechanisms.update();
+         telemetry.addData("State:", mechanisms.getState());
+         telemetry.addData("Color: ", mechanisms.getColorSensorValues());
          telemetry.addData("Shooting:", isShootingStarted ? "Started" : "Stopped");
          telemetry.update();
       }

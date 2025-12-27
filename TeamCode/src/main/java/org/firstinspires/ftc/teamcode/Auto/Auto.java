@@ -8,58 +8,158 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.Mechanisums.Mechanisums;
+import org.firstinspires.ftc.teamcode.Mechanisums.Mechanisms;
 import org.firstinspires.ftc.teamcode.Utils.Artifact;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
 @Autonomous
 public class Auto extends LinearOpMode {
-   public static double intakeDriveSpeed = 0.3;
+   public static double intakeDriveSpeed = 0.2;
    Follower follower;
    int pathState = 0;
-   Mechanisums mechanisums;
+   Mechanisms mechanisms;
    Artifact[] targetMotif = new Artifact[]{
       Artifact.PURPLE, Artifact.GREEN, Artifact.PURPLE
    };
 
+   private DcMotor frontLeft, frontRight, backLeft, backRight;
+
    @Override
    public void runOpMode() throws InterruptedException {
+      frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+      frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+      backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+      backRight = hardwareMap.get(DcMotor.class, "backRight");
+
+      frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+      backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+      frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+      backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
       follower = Constants.createFollower(hardwareMap);
       follower.setStartingPose(new Pose(34.298, 135.777, Math.toRadians(180)));
       follower.setMaxPower(0.8);
-      mechanisums = new Mechanisums(hardwareMap);
-      mechanisums.setSpinIndexerState(new Artifact[]{
+      mechanisms = new Mechanisms(hardwareMap);
+      mechanisms.setSpinIndexerState(new Artifact[]{
          Artifact.PURPLE, Artifact.GREEN, Artifact.PURPLE
       });
+
+
       PathChain myPath = follower
          .pathBuilder()
+         // Path1
          .addPath(
-            new BezierLine(new Pose(34.298, 135.777), new Pose(55.000, 83.500))
+            new BezierLine(
+               new Pose(34.298, 135.777),
+               new Pose(55.000, 83.500)
+            )
          )
-         .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(137))
-         .addPath(
-            new BezierLine(new Pose(55.000, 83.500), new Pose(42.000, 83.500))
+         .setLinearHeadingInterpolation(
+            Math.toRadians(180),
+            Math.toRadians(137)
          )
-         .setLinearHeadingInterpolation(Math.toRadians(137), Math.toRadians(180))
+
+         // Path2
          .addPath(
-            new BezierLine(new Pose(42.000, 83.500), new Pose(16.000, 83.500))
+            new BezierLine(
+               new Pose(55.000, 83.500),
+               new Pose(44.000, 83.500)
+            )
+         )
+         .setLinearHeadingInterpolation(
+            Math.toRadians(137),
+            Math.toRadians(180)
+         )
+
+         // Path3
+         .addPath(
+            new BezierLine(
+               new Pose(44.000, 83.500),
+               new Pose(16.000, 83.500)
+            )
+         )
+         .setTangentHeadingInterpolation()
+         // Path5
+         .addPath(
+            new BezierLine(
+               new Pose(16.000, 83.000),
+               new Pose(55.000, 83.500)
+            )
+         )
+         .setLinearHeadingInterpolation(
+            Math.toRadians(180),
+            Math.toRadians(137)
+         )
+
+         // Path6
+         .addPath(
+            new BezierLine(
+               new Pose(55.000, 83.500),
+               new Pose(44.000, 60.500)
+            )
+         )
+         .setLinearHeadingInterpolation(
+            Math.toRadians(137),
+            Math.toRadians(180)
+         )
+
+         // Path7
+         .addPath(
+            new BezierLine(
+               new Pose(44.000, 60.500),
+               new Pose(16.000, 60.500)
+            )
          )
          .setTangentHeadingInterpolation()
 
+         // Path8
          .addPath(
-            new BezierCurve(
-               new Pose(16.000, 83.500),
-               new Pose(33.094, 76.813),
-               new Pose(15.000, 72.000)
+            new BezierLine(
+               new Pose(16.000, 60.500),
+               new Pose(55.000, 83.500)
             )
          )
-         .setConstantHeadingInterpolation(Math.toRadians(180))
-         .addPath(
-            new BezierLine(new Pose(15.000, 72.000), new Pose(55.000, 83.500))
+         .setLinearHeadingInterpolation(
+            Math.toRadians(180),
+            Math.toRadians(137)
          )
-         .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(137))
+
+         // Path9
+         .addPath(
+            new BezierLine(
+               new Pose(55.000, 83.500),
+               new Pose(44.000, 35.500)
+            )
+         )
+         .setLinearHeadingInterpolation(
+            Math.toRadians(137),
+            Math.toRadians(180)
+         )
+
+         // Path10
+         .addPath(
+            new BezierLine(
+               new Pose(44.000, 35.500),
+               new Pose(15.000, 35.500)
+            )
+         )
+         .setTangentHeadingInterpolation()
+
+         // Path11
+         .addPath(
+            new BezierLine(
+               new Pose(15.000, 35.500),
+               new Pose(55.000, 83.500)
+            )
+         )
+         .setLinearHeadingInterpolation(
+            Math.toRadians(180),
+            Math.toRadians(137)
+         )
          .build();
 
 
@@ -68,29 +168,62 @@ public class Auto extends LinearOpMode {
       waitForStart();
       while (opModeIsActive()) {
          if (!follower.isBusy()) {
-            if (pathState == 0 || pathState == 4) {
-               while (!mechanisums.shoot(targetMotif)) {
-                  mechanisums.update();
+            if (pathState == 0 || pathState == 3 || pathState == 6 || pathState == 9) {
+
+               while (Math.abs(mechanisms.getTurnValue()) > 0.2) {
+                  double rx = mechanisms.getTurnValue();
+                  double frontLeftPower = +rx;
+                  double backLeftPower = -rx;
+                  double frontRightPower = +rx;
+                  double backRightPower = -rx;
+
+                  double max = Math.max(
+                     Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower)),
+                     Math.max(Math.abs(frontRightPower), Math.abs(backRightPower))
+                  );
+
+                  if (max > 1.0) {
+                     frontLeftPower /= max;
+                     backLeftPower /= max;
+                     frontRightPower /= max;
+                     backRightPower /= max;
+                  }
+
+                  frontLeft.setPower(frontLeftPower);
+                  frontRight.setPower(backLeftPower);
+                  backLeft.setPower(frontRightPower);
+                  backRight.setPower(backRightPower);
+
+
                }
-               mechanisums.startIntake();
-            } else if (pathState == 2) {
-               mechanisums.slowIntake();
+               while (!mechanisms.shoot(targetMotif)) {
+                  mechanisms.update();
+               }
+               mechanisms.startIntake();
+            } else if (pathState == 2 || pathState == 5 || pathState == 8) {
+               mechanisms.slowIntake();
+            } else if (pathState == 3) {
+               sleep(700);
             }
             pathState++;
-            if (pathState == 1) {
+            if (pathState == 1 || pathState == 4 || pathState == 7) {
                follower.followPath(new PathChain(myPath.getPath(pathState)), false);
-            } else if (pathState == 2) {
+            } else if (pathState == 2 || pathState == 5 || pathState == 8) {
                follower.followPath(new PathChain(myPath.getPath(pathState)), intakeDriveSpeed, true);
             } else {
                follower.followPath(myPath.getPath(pathState));
             }
          } else {
-            if (pathState == 1 || pathState == 2) {
-               mechanisums.startIntake();
+            if (pathState == 2 || pathState == 5 || pathState == 8) {
+               mechanisms.startIntake();
             }
+            if (pathState == 3 || pathState == 6 || pathState == 9) {
+               mechanisms.validateArtifacts();
+            }
+
          }
-         telemetry.addData("State: ", mechanisums.getState());
-         mechanisums.update();
+         telemetry.addData("State: ", mechanisms.getState());
+         mechanisms.update();
          follower.update();
       }
    }
