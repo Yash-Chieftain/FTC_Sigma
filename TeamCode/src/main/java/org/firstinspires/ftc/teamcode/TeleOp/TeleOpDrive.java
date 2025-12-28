@@ -90,7 +90,6 @@ public class TeleOpDrive extends LinearOpMode {
             speed = 1;
          }
 
-         if (!isShootingStarted) {
             if (gamepad2.left_bumper && !gamepad2.x) {
                if (!spinIndexer.getIsCurrentIntake()) {
                   spinIndexer.setPosition(Artifact.EMPTY, true);
@@ -107,13 +106,8 @@ public class TeleOpDrive extends LinearOpMode {
                   sleep(movementSleep);
                }
 
-               if (!gamepad2.right_bumper && !spinIndexer.setPosition(Artifact.EMPTY, true)) {
-                  intake.stopIntake();
-                  intake.reverse();
-               } else {
-                  intake.reset();
-                  intake.startIntake();
-               }
+            } else if (gamepad2.left_trigger>0.5) {
+               intake.reverse();
 
             } else {
                intake.slowIntake();
@@ -155,9 +149,6 @@ public class TeleOpDrive extends LinearOpMode {
                }
             }
 
-            if (gamepad2.left_trigger > 0.5) {
-               intake.reverse();
-            }
 
             if (gamepad2.dpad_left) {
                targetPattern = pattern[0];
@@ -166,19 +157,12 @@ public class TeleOpDrive extends LinearOpMode {
             } else if (gamepad2.dpad_right) {
                targetPattern = pattern[2];
             }
-         } else {
-            isShootingStarted = !mechanisms.shoot(targetPattern);
-         }
 
 
-         if (!spinIndexer.getIsCurrentIntake() && !isShootingStarted) {
+
+         if (gamepad2.aWasPressed()){
             shooter.shoot();
-            spinIndexer.setSectionArtifact(
-               spinIndexer.getCurrentPosition(),
-               Artifact.EMPTY
-            );
-         } else {
-            isShootingStarted = false;
+            spinIndexer.setSectionArtifact(spinIndexer.getCurrentPosition(), Artifact.EMPTY);
          }
 
 

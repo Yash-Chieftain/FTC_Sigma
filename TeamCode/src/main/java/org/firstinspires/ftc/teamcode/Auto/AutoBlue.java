@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -17,8 +16,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
 @Autonomous
-public class Auto extends LinearOpMode {
-   public static double intakeDriveSpeed = 0.2;
+public class AutoBlue extends LinearOpMode {
+   public static double intakeDriveSpeed = 0.25;
    Follower follower;
    int pathState = 0;
    Mechanisms mechanisms;
@@ -170,32 +169,7 @@ public class Auto extends LinearOpMode {
          if (!follower.isBusy()) {
             if (pathState == 0 || pathState == 3 || pathState == 6 || pathState == 9) {
 
-               while (Math.abs(mechanisms.getTurnValue()) > 0.2) {
-                  double rx = mechanisms.getTurnValue();
-                  double frontLeftPower = +rx;
-                  double backLeftPower = -rx;
-                  double frontRightPower = +rx;
-                  double backRightPower = -rx;
 
-                  double max = Math.max(
-                     Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower)),
-                     Math.max(Math.abs(frontRightPower), Math.abs(backRightPower))
-                  );
-
-                  if (max > 1.0) {
-                     frontLeftPower /= max;
-                     backLeftPower /= max;
-                     frontRightPower /= max;
-                     backRightPower /= max;
-                  }
-
-                  frontLeft.setPower(frontLeftPower);
-                  frontRight.setPower(backLeftPower);
-                  backLeft.setPower(frontRightPower);
-                  backRight.setPower(backRightPower);
-
-
-               }
                while (!mechanisms.shoot(targetMotif)) {
                   mechanisms.update();
                }
