@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Mechanisums;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -17,9 +18,9 @@ public class Intake {
 
    public Intake(HardwareMap hardwareMap) {
       motor = hardwareMap.get(DcMotor.class, "intake");
+      motor.setDirection(DcMotorSimple.Direction.REVERSE);
       stopIntake = hardwareMap.get(Servo.class, "stopIntake");
       stopIntake.setPosition(1);
-      slowIntake();
    }
 
    public void startIntake() {
@@ -32,7 +33,7 @@ public class Intake {
    }
 
    public void stopIntake() {
-      stopIntake.setPosition(0.882);
+      motor.setPower(0);
    }
 
    public void reverse(){

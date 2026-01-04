@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -90,77 +91,76 @@ public class TeleOpDrive extends LinearOpMode {
             speed = 1;
          }
 
-            if (gamepad2.left_bumper && !gamepad2.x) {
-               if (!spinIndexer.getIsCurrentIntake()) {
-                  spinIndexer.setPosition(Artifact.EMPTY, true);
-               }
+         if (gamepad2.left_bumper && !gamepad2.x) {
+            if (!spinIndexer.getIsCurrentIntake()) {
+               spinIndexer.setPosition(Artifact.EMPTY, true);
+            }
 
-               Artifact intakeColorDetected = colorSensing.getIntakeColorDetected();
-               if (intakeColorDetected != Artifact.EMPTY) {
-                  intake.slowIntake();
-                  spinIndexer.setSectionArtifact(
-                     spinIndexer.getCurrentPosition(),
-                     intakeColorDetected
-                  );
-                  spinIndexer.setPosition(Artifact.EMPTY, true);
-                  sleep(movementSleep);
-               }
-
-            } else if (gamepad2.left_trigger>0.5) {
-               intake.reverse();
-
-            } else {
+            Artifact intakeColorDetected = colorSensing.getIntakeColorDetected();
+            if (intakeColorDetected != Artifact.EMPTY) {
                intake.slowIntake();
+               spinIndexer.setSectionArtifact(
+                  spinIndexer.getCurrentPosition(),
+                  intakeColorDetected
+               );
+               spinIndexer.setPosition(Artifact.EMPTY, true);
+               sleep(movementSleep);
             }
 
-            if (gamepad2.right_bumper) {
-               shooter.startShooter();
-               intake.startIntake();
-            } else {
-               shooter.stopShooter();
+         } else if (gamepad2.left_trigger > 0.5) {
+            intake.reverse();
+
+         } else {
+            intake.slowIntake();
+         }
+
+         if (gamepad2.right_bumper) {
+            shooter.startShooter();
+            intake.startIntake();
+         } else {
+            shooter.stopShooter();
+         }
+
+         if (gamepad2.right_trigger > 0.5) {
+            if (!spinIndexer.setPosition(Artifact.PURPLE, false)) {
+               spinIndexer.setPosition(Artifact.GREEN, false);
             }
+         }
 
-            if (gamepad2.right_trigger > 0.5) {
-               if (!spinIndexer.setPosition(Artifact.PURPLE, false)) {
-                  spinIndexer.setPosition(Artifact.GREEN, false);
-               }
+         if (Math.abs(shooter.getVelocity() - shooter.getTargetVelocity()) < 30) {
+            gamepad2.rumble(100);
+         }
+         if (gamepad2.bWasPressed()) {
+            index += 1;
+            index = index % 3;
+            spinIndexer.setPosition(index, 0);
+         }
+
+         if (gamepad2.xWasPressed()) {
+            selectedArtifact = Artifact.PURPLE;
+            if (!spinIndexer.setPosition(Artifact.PURPLE, false)) {
+               colorSensing.startBlink();
             }
+         }
 
-            if (Math.abs(shooter.getVelocity() - shooter.getTargetVelocity()) < 30) {
-               gamepad2.rumble(100);
+         if (gamepad2.yWasPressed()) {
+            selectedArtifact = Artifact.GREEN;
+            if (!spinIndexer.setPosition(Artifact.GREEN, false)) {
+               colorSensing.startBlink();
             }
-            if (gamepad2.bWasPressed()) {
-               index += 1;
-               index = index % 3;
-               spinIndexer.setPosition(index, 0);
-            }
-
-            if (gamepad2.xWasPressed()) {
-               selectedArtifact = Artifact.PURPLE;
-               if (!spinIndexer.setPosition(Artifact.PURPLE, false)) {
-                  colorSensing.startBlink();
-               }
-            }
-
-            if (gamepad2.yWasPressed()) {
-               selectedArtifact = Artifact.GREEN;
-               if (!spinIndexer.setPosition(Artifact.GREEN, false)) {
-                  colorSensing.startBlink();
-               }
-            }
+         }
 
 
-            if (gamepad2.dpad_left) {
-               targetPattern = pattern[0];
-            } else if (gamepad2.dpad_up) {
-               targetPattern = pattern[1];
-            } else if (gamepad2.dpad_right) {
-               targetPattern = pattern[2];
-            }
+         if (gamepad2.dpad_left) {
+            targetPattern = pattern[0];
+         } else if (gamepad2.dpad_up) {
+            targetPattern = pattern[1];
+         } else if (gamepad2.dpad_right) {
+            targetPattern = pattern[2];
+         }
 
 
-
-         if (gamepad2.aWasPressed()){
+         if (gamepad2.aWasPressed()) {
             shooter.shoot();
             spinIndexer.setSectionArtifact(spinIndexer.getCurrentPosition(), Artifact.EMPTY);
          }

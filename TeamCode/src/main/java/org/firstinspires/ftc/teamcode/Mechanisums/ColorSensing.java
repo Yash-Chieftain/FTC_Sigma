@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Utils.Artifact;
 @Configurable
 public class ColorSensing {
    public static double intakeColorSensorThreshold = 4;
-   public static double shootingColorSensorThreshold = 4;
+   public static double shootingColorSensorThreshold = 6;
    public static double greenPWM = 0.5;
    public static double purplePWM = 0.7;
    public static double redPWM = 0.3;

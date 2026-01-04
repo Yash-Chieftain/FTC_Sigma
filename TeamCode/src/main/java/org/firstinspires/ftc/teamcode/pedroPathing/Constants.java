@@ -42,13 +42,13 @@ public class Constants {
       .xVelocity(58.6)
       .yVelocity(45.5);
    public static PinpointConstants localizerConstants = new PinpointConstants()
-      .forwardPodY(-2.02)
-      .strafePodX(2.31)
+      .forwardPodY(-3.3464)
+      .strafePodX(1.4763)
       .distanceUnit(DistanceUnit.INCH)
       .hardwareMapName("pinpoint")
       .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-      .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
-      .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+      .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+      .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
    public static Follower createFollower(HardwareMap hardwareMap) {
       return new FollowerBuilder(followerConstants, hardwareMap)

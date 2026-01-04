@@ -4,25 +4,28 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import androidx.core.view.TintableBackgroundView;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.follower.Follower;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import org.firstinspires.ftc.teamcode.Mechanisums.Mechanisums;
+
+import org.firstinspires.ftc.teamcode.Mechanisums.Mechanisms;
 import org.firstinspires.ftc.teamcode.Mechanisums.Vision;
 import org.firstinspires.ftc.teamcode.Utils.Artifact;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
 @TeleOp(name = "Test", group = "Linear Opmode")
 public class Test extends LinearOpMode {
 
    public static double speed = 0.7;
-   public static double rotateMultiplier = 0.5;
 
    Artifact selectedArtifact;
    Vision vision;
 
-   Mechanisums mechanisums;
+   Mechanisms mechanisums;
 
    int index = -1;
    boolean artifactShooted = false;
@@ -37,35 +40,21 @@ public class Test extends LinearOpMode {
    Artifact[] targetPattern = pattern[0];
    // Motors
    private DcMotor frontLeft, frontRight, backLeft, backRight;
-
+Follower follower;
    @Override
    public void runOpMode() {
 
       // aprilTagYawDetector = new AprilTagYawDetector(hardwareMap, true);
-      mechanisums = new Mechanisums(hardwareMap);
-      vision = new Vision(hardwareMap);
-
-      // Map motors
-      frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-      frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-      backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-      backRight = hardwareMap.get(DcMotor.class, "backRight");
-
-
-      // Reverse one side
-      frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-      backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-
-      frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-      backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-
+      mechanisums = new Mechanisms(hardwareMap);
+      follower = Constants.createFollower(hardwareMap);
       waitForStart();
-
+follower.startTeleopDrive(true);
+follower.update();
       while (opModeIsActive()) {
 
          // Gamepad inputs (SWAPPED)
          double y = -gamepad1.left_stick_y;
-         double x = gamepad1.left_stick_x;
+         double x = -gamepad1.left_stick_x;
          double rx = gamepad1.right_stick_x;
 
          if (gamepad1.b) {
@@ -100,33 +89,14 @@ public class Test extends LinearOpMode {
          }
 
 
-         // Mecanum math (UNCHANGED)
-         double frontLeftPower = y + x + rx;
-         double backLeftPower = y - x - rx;
-         double frontRightPower = y - x + rx;
-         double backRightPower = y + x - rx;
 
-         double max = Math.max(
-            Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower)),
-            Math.max(Math.abs(frontRightPower), Math.abs(backRightPower))
-         );
-
-         if (max > 1.0) {
-            frontLeftPower /= max;
-            backLeftPower /= max;
-            frontRightPower /= max;
-            backRightPower /= max;
-         }
-
-         frontLeft.setPower(frontLeftPower * speed);
-         frontRight.setPower(backLeftPower * speed);
-         backLeft.setPower(frontRightPower * speed);
-         backRight.setPower(backRightPower * speed);
       mechanisums.update();
          telemetry.addData("State:", mechanisums.getState());
          telemetry.addData("Color: ", mechanisums.getColorSensorValues());
          telemetry.addData("Shooting:", isShootingStarted ? "Started" : "Stopped");
          telemetry.update();
+         follower.setTeleOpDrive(y,x, rx);
+         follower.update();
       }
    }
 }

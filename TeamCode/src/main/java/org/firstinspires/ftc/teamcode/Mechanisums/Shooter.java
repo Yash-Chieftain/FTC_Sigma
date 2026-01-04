@@ -16,7 +16,7 @@ public class Shooter {
    public static double kp = 250;
    public static double ki = 0;
    public static double kd = 0;
-   public static double kf = 15;
+   public static double kf = 19;
    public static long shootDelay = 100;
    public static double shootPosition =  0.700;
    DcMotorEx leftMotor, rightMotor;

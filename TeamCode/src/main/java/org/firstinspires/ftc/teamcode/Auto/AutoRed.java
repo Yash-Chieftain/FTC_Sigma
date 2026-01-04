@@ -55,12 +55,12 @@ public class AutoRed extends LinearOpMode {
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(53))
                 .addPath(
-                        new BezierLine(new Pose(89.000, 83.500), new Pose(100.000, 83.077))
+                        new BezierLine(new Pose(89.000, 83.500), new Pose(96.000, 83.077))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(53), Math.toRadians(0))
 
                 .addPath(
-                        new BezierLine(new Pose(100.000, 83.077), new Pose(128.000, 83.500))
+                        new BezierLine(new Pose(96.000, 83.077), new Pose(128.000, 83.500))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
@@ -72,7 +72,7 @@ public class AutoRed extends LinearOpMode {
                 .addPath(
                         new BezierLine(new Pose(89.000, 83.500), new Pose(100.000, 60.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(51), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(53), Math.toRadians(0))
 
                 .addPath(
                         new BezierLine(new Pose(100.000, 60.500), new Pose(128.000, 60.500))
@@ -87,7 +87,7 @@ public class AutoRed extends LinearOpMode {
                 .addPath(
                         new BezierLine(new Pose(89.000, 83.500), new Pose(100.000, 35.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(51), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(53), Math.toRadians(0))
 
                 .addPath(
                         new BezierLine(new Pose(100.000, 35.500), new Pose(129.000, 35.500))
