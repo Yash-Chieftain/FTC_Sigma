@@ -36,8 +36,8 @@ public class Shooter {
          DcMotor.RunMode.RUN_USING_ENCODER,
          new PIDFCoefficients(kp, ki, kd, kf)
       );
-      bootKicker1 = hardwareMap.get(Servo.class, "bootKicker1");
-      bootKicker1.setPosition(1);
+//      bootKicker1 = hardwareMap.get(Servo.class, "bootKicker1");
+//      bootKicker1.setPosition(1);
       bootKicker2 = hardwareMap.get(Servo.class, "bootKicker2");
       bootKicker2.setPosition(0);
    }

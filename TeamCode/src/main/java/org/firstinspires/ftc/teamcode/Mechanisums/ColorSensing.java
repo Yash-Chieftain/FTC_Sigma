@@ -33,7 +33,7 @@ public class ColorSensing {
    public ColorSensing(HardwareMap hardwareMap) {
       intakeColorSensor1 = hardwareMap.get(RevColorSensorV3.class, "intakeColorSensor1");
       intakeColorSensor2 = hardwareMap.get(RevColorSensorV3.class, "intakeColorSensor2");
-      shootingColorSensor = hardwareMap.get(RevColorSensorV3.class, "shootingColorSensor");
+      shootingColorSensor = hardwareMap.get(RevColorSensorV3.class, "shootingColorSensor1");
       led = hardwareMap.get(Servo.class, "led");
 
    }
