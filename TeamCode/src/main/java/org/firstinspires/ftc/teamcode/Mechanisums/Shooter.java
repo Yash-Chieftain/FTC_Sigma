@@ -24,7 +24,7 @@ public class Shooter {
    public Shooter(HardwareMap hardwareMap) {
       leftMotor = hardwareMap.get(DcMotorEx.class, "leftshoot");
       rightMotor = hardwareMap.get(DcMotorEx.class, "rightshoot");
-      rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+      leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
       leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       leftMotor.setPIDFCoefficients(

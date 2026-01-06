@@ -77,20 +77,10 @@ public class FullTeleOp extends LinearOpMode {
             shooter.stopShooter();
          }
 
-         if (gamepad2.dpadUpWasPressed()) {
-            shooter.startShooter();
-         } else {
-            shooter.stopShooter();
-
-         }
-
-
-
          if (gamepad2.aWasPressed()) {
             shooter.shoot();
             spinIndexer.setSectionArtifact(spinIndexer.getCurrentPosition(), Artifact.EMPTY);
          }
-
 
          if (gamepad2.left_bumper && gamepad2.bWasPressed()) {
             spinIndexerIndex += 1;
