@@ -10,16 +10,15 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Disabled
 @Configurable
 @TeleOp
 public class ShooterPIDF extends LinearOpMode {
 
-   public static double velocity = 1500;
-   public static double kp = 200;
-   public static double ki = 1;
-   public static double kd = 10;
-   public static double kf = 11.7;
+   public static double velocity = 1150;
+    public static double kp = 250;
+    public static double ki = 0;
+    public static double kd = 0;
+    public static double kf = 19;
 
    DcMotorEx leftMotor, rightMotor;
    ElapsedTime timer = new ElapsedTime();
@@ -35,8 +34,8 @@ public class ShooterPIDF extends LinearOpMode {
    @Override
    public void runOpMode() throws InterruptedException {
 
-      leftMotor = hardwareMap.get(DcMotorEx.class, "leftShoot");
-      rightMotor = hardwareMap.get(DcMotorEx.class, "rightShoot");
+      leftMotor = hardwareMap.get(DcMotorEx.class, "leftshoot");
+      rightMotor = hardwareMap.get(DcMotorEx.class, "rightshoot");
       leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       leftMotor.setPIDFCoefficients(
          DcMotor.RunMode.RUN_USING_ENCODER,
