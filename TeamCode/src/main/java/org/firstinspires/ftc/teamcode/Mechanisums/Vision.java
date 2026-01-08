@@ -19,6 +19,7 @@ public class Vision {
    private double previousTx = 0;
    private double previousTime = 0;
 
+
    public Vision(HardwareMap hardwareMap) {
       limelight = hardwareMap.get(Limelight3A.class, "limelight");
       limelight.pipelineSwitch(0);
@@ -73,6 +74,14 @@ public class Vision {
 
    public double getTx() {
       return previousTx;
+   }
+   public boolean update() {
+      LLResult result = limelight.getLatestResult();
+      if (result.isValid()) {
+         this.previousTx =  result.getTx();
+      }
+      return result.isValid();
+
    }
 
 }

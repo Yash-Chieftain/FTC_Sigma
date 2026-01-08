@@ -1,23 +1,50 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import com.bylazar.configurables.annotations.Configurable;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.sun.tools.javac.code.Attribute;
 
-import org.firstinspires.ftc.teamcode.Mechanisums.Turret;
+import org.firstinspires.ftc.teamcode.Mechanisums.Mechanisms;
+import org.firstinspires.ftc.teamcode.Mechanisums.Shooter;
+import org.firstinspires.ftc.teamcode.Mechanisums.SpinIndexer;
+import org.firstinspires.ftc.teamcode.Utils.Artifact;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Configurable
-@TeleOp(name = "Test", group = "Linear Opmode")
+@TeleOp
 public class Test extends LinearOpMode {
-   Turret turret;
+   Mechanisms mechanisms;
+
 
    @Override
-   public void runOpMode() {
-      turret = new Turret(hardwareMap);
+   public void runOpMode() throws InterruptedException {
+      mechanisms = new Mechanisms(hardwareMap);
       waitForStart();
       while (opModeIsActive()) {
-         telemetry.addData("turret", turret.getTicks());
+         if (gamepad1.left_bumper) {
+            mechanisms.startIntake();
+         }else{
+            mechanisms.stopIntake();
+         }
+         if (gamepad1.right_bumper) {
+            mechanisms.startShooter();
+         }else{
+            mechanisms.stopShooter();
+         }
+         if (gamepad1.a) {
+            mechanisms.shoot(new Artifact[]{Artifact.GREEN, Artifact.PURPLE, Artifact.PURPLE});
+         }
+         telemetry.addData("Velocity", mechanisms.getShooterVelocity());
+         telemetry.addData("State",mechanisms.getState());
+         telemetry.addData("Color", mechanisms.getColorSensorValues());
+         telemetry.addData("getTx", mechanisms.getTurnValue());
          telemetry.update();
+         mechanisms.update();
       }
+
+
    }
 }

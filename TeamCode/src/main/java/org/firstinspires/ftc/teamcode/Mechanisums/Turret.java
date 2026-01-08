@@ -9,23 +9,32 @@ public class Turret {
 
    // ================= CONFIG =================
 
-   /** Max mechanical rotation (degrees) */
+   /**
+    * Max mechanical rotation (degrees)
+    */
    public static double MAX_DEGREES = 300;
 
-   /** Encoder ticks per motor revolution */
+   /**
+    * Encoder ticks per motor revolution
+    */
    public static double TICKS_PER_REV = 537.6; // GoBILDA 5202 (change if needed)
 
-   /** Gear ratio (motor : turret) */
+   /**
+    * Gear ratio (motor : turret)
+    */
    public static double GEAR_RATIO = 1.0; // change if geared
 
-   /** Motor power while moving */
+   /**
+    * Motor power while moving
+    */
    public static double MOTOR_POWER = 0.3;
 
    // ==========================================
 
    private DcMotorEx turretMotor;
    private double targetDegrees = 0;
-
+   private static double kp = 0.09;
+   private static double maxPower = 0.5;
    public Turret(HardwareMap hardwareMap) {
       turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
 
@@ -34,7 +43,9 @@ public class Turret {
       turretMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
    }
 
-   /** Call every loop */
+   /**
+    * Call every loop
+    */
    public void update() {
       int targetTicks = degreesToTicks(targetDegrees);
 
@@ -43,40 +54,51 @@ public class Turret {
       turretMotor.setPower(MOTOR_POWER);
    }
 
-   /** Set desired turret angle */
+   /**
+    * Set desired turret angle
+    */
    public void setTargetDegrees(double deg) {
       targetDegrees = wrapDegrees(deg);
    }
 
-   /** Convert degrees → encoder ticks */
+   /**
+    * Convert degrees → encoder ticks
+    */
    public int degreesToTicks(double deg) {
       return (int) ((deg / 360.0) * TICKS_PER_REV * GEAR_RATIO);
    }
 
-   /** Convert encoder ticks → degrees */
+   /**
+    * Convert encoder ticks → degrees
+    */
    public double getCurrentDegrees() {
       int ticks = turretMotor.getCurrentPosition();
       return (ticks / (TICKS_PER_REV * GEAR_RATIO)) * 360.0;
    }
 
-   public double getTicks(){
+   public double getTicks() {
       return turretMotor.getCurrentPosition();
    }
 
-   public void setMotorPower(double power){
-      turretMotor.setPower(power);
+   public void alignLimeLight(double tx) {
+      double power = tx * kp;
+      power = Math.max(-maxPower, Math.min(maxPower, power));
+      turretMotor.setPower(-power);
    }
 
 
-
-   /** Wrap angle to 0–MAX_DEGREES */
+   /**
+    * Wrap angle to 0–MAX_DEGREES
+    */
    public double wrapDegrees(double deg) {
       deg %= MAX_DEGREES;
       if (deg < 0) deg += MAX_DEGREES;
       return deg;
    }
 
-   /** Stop motor */
+   /**
+    * Stop motor
+    */
    public void stop() {
       turretMotor.setPower(0);
    }

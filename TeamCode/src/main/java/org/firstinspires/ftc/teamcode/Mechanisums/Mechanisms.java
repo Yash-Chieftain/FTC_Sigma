@@ -14,6 +14,7 @@ public class Mechanisms {
    SpinIndexer spinIndexer;
    ColorSensing colorSensing;
    Vision vision;
+   Turret turret;
    ElapsedTime shootTimer = new ElapsedTime();
    ElapsedTime intakeTimer = new ElapsedTime();
    private int shootState = 0;
@@ -25,10 +26,10 @@ public class Mechanisms {
       shooter = new Shooter(hardwareMap);
       spinIndexer = new SpinIndexer(hardwareMap);
       vision = new Vision(hardwareMap);
-
+      turret = new Turret(hardwareMap);
    }
 
-   public double getTurnValue(){
+   public double getTurnValue() {
       return vision.alignTurnValue(0);
    }
 
@@ -50,7 +51,6 @@ public class Mechanisms {
       }
       spinIndexer.setPosition(shootState, 0);
       shooter.startShooter();
-      intake.slowIntake();
       if (colorSensing.shootingDetected) {
          shootTimer.reset();
       }
@@ -58,7 +58,7 @@ public class Mechanisms {
       if (shooter.isVelocityReached() && colorSensing.shootingDetected) {
          Wait.mySleep(actionWait);
          shooter.shoot();
-         while (colorSensing.shootingDetected && shootTimer.milliseconds() < 500) {
+         while (colorSensing.shootingDetected && shootTimer.milliseconds() < 1000) {
             shooter.shoot();
             this.update();
          }
@@ -120,6 +120,7 @@ public class Mechanisms {
    }
 
    public void startIntake() {
+      intake.startIntake();
       if (!spinIndexer.getIsCurrentIntake()) {
          spinIndexer.setPosition(Artifact.EMPTY, true);
       }
@@ -143,6 +144,9 @@ public class Mechanisms {
       }
    }
 
+   public void stopIntake() {
+      intake.stopIntake();
+   }
 
    public void slowIntake() {
       intake.slowIntake();
@@ -176,5 +180,8 @@ public class Mechanisms {
 
    public void update() {
       colorSensing.update();
+      if (vision.update()) {
+         turret.alignLimeLight(vision.getTx());
+      }
    }
 }
