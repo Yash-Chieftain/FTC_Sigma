@@ -183,5 +183,8 @@ public class Mechanisms {
       if (vision.update()) {
          turret.alignLimeLight(vision.getTx());
       }
+      else {
+         turret.alignLimeLight(0);
+      }
    }
 }
