@@ -19,12 +19,15 @@ public class Test extends LinearOpMode {
     Mechanisms mechanisms;
     Follower follower;
     public static double maxPower = 1;
+    int spinIndexerIndex = 0;
+
     boolean isPark = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
         follower = Constants.createFollower(hardwareMap);
         mechanisms = new Mechanisms(hardwareMap);
+        mechanisms.setSpinIndexerState(new Artifact[]{Artifact.PURPLE, Artifact.PURPLE, Artifact.GREEN});
         waitForStart();
         follower.startTeleopDrive(true);
         follower.update();
@@ -36,6 +39,16 @@ public class Test extends LinearOpMode {
                 maxPower = 0.2;
             } else {
                 maxPower = 1;
+            }
+
+            if (gamepad2.left_bumper && gamepad2.bWasPressed()) {
+                spinIndexerIndex += 1;
+                spinIndexerIndex = spinIndexerIndex % 3;
+                mechanisms.setSpinIndexerIntakePosition(spinIndexerIndex);
+            } else if (gamepad2.bWasPressed()) {
+                spinIndexerIndex += 1;
+                spinIndexerIndex = spinIndexerIndex % 3;
+                mechanisms.setSpinIndexerShootingPosition(spinIndexerIndex);
             }
 
             if(gamepad1.yWasPressed()){
@@ -60,6 +73,7 @@ public class Test extends LinearOpMode {
 
             if (gamepad2.right_bumper) {
                 mechanisms.startShooter();
+                mechanisms.startIntake();
             } else {
                 mechanisms.stopShooter();
             }

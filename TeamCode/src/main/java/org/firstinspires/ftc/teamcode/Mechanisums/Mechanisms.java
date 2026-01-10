@@ -53,6 +53,7 @@ public class Mechanisms {
       }
       spinIndexer.setPosition(shootState, 0);
       shooter.startShooter();
+      intake.startIntake();
       if (colorSensing.shootingDetected) {
          shootTimer.reset();
       }
@@ -178,6 +179,12 @@ public class Mechanisms {
 
    public double getShooterVelocity() {
       return shooter.getVelocity();
+   }
+   public void setSpinIndexerShootingPosition(int position) {
+      spinIndexer.setPosition(position, 0);
+   }
+   public void setSpinIndexerIntakePosition(int position) {
+      spinIndexer.setPosition(position);
    }
 
    public void setSpinIndexerState(Artifact[] state) {
