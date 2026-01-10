@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Mechanisums.ColorSensing;
 import org.firstinspires.ftc.teamcode.Mechanisums.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisums.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisums.SpinIndexer;
+import org.firstinspires.ftc.teamcode.Mechanisums.Turret;
 import org.firstinspires.ftc.teamcode.Utils.Artifact;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -25,13 +26,11 @@ public class FullTeleOp extends LinearOpMode {
    double maxPower = 1;
    int spinIndexerIndex = 0;
    ElapsedTime spinIndexerMovementTimer = new ElapsedTime();
-   DcMotor turret;
+   Turret turret;
 
    @Override
    public void runOpMode() throws InterruptedException {
-      turret = hardwareMap.get(DcMotor.class, "turret");
-      turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-      turret.setPower(0);
+      turret = new Turret(hardwareMap);
       follower = Constants.createFollower(hardwareMap);
       intake = new Intake(hardwareMap);
       shooter = new Shooter(hardwareMap);

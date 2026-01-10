@@ -15,6 +15,7 @@ public class Mechanisms {
    ColorSensing colorSensing;
    Vision vision;
    Turret turret;
+   Parking parking;
    ElapsedTime shootTimer = new ElapsedTime();
    ElapsedTime intakeTimer = new ElapsedTime();
    private int shootState = 0;
@@ -27,6 +28,7 @@ public class Mechanisms {
       spinIndexer = new SpinIndexer(hardwareMap);
       vision = new Vision(hardwareMap);
       turret = new Turret(hardwareMap);
+      parking = new Parking(hardwareMap);
    }
 
    public double getTurnValue() {
@@ -79,6 +81,10 @@ public class Mechanisms {
       return shootState == -1 || shootState > 2;
    }
 
+   public void shoot(){
+      shooter.shoot();
+   }
+
    public void validateArtifacts() {
       if (intakeState > 2) {
          intakeState = -1;
@@ -119,6 +125,13 @@ public class Mechanisms {
 
    }
 
+   public void park(){
+      parking.park();
+   }
+   public void unPark(){
+      parking.reset();
+   }
+
    public void startIntake() {
       intake.startIntake();
       if (!spinIndexer.getIsCurrentIntake()) {
@@ -150,6 +163,9 @@ public class Mechanisms {
 
    public void slowIntake() {
       intake.slowIntake();
+   }
+   public void reverseIntake(){
+      intake.reverse();
    }
 
    public String getState() {
