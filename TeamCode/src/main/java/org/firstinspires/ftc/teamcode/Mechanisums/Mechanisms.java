@@ -180,7 +180,7 @@ public class Mechanisms {
 
    public void update() {
       colorSensing.update();
-      if (vision.update()) {
+      if (vision.update() && Math.abs(vision.getTx())> 2) {
          turret.alignLimeLight(vision.getTx());
       }
       else {

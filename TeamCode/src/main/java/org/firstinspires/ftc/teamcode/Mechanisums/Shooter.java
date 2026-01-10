@@ -19,12 +19,13 @@ public class Shooter {
    public static double kf = 19;
    public static long shootDelay = 100;
    public static double shootPosition =  0.700;
+   public static double divideShootTime = 1;
    DcMotorEx leftMotor, rightMotor;
    Servo bootKicker1, bootKicker2;
    public Shooter(HardwareMap hardwareMap) {
       leftMotor = hardwareMap.get(DcMotorEx.class, "leftshoot");
       rightMotor = hardwareMap.get(DcMotorEx.class, "rightshoot");
-      leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
       leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       leftMotor.setPIDFCoefficients(
@@ -36,8 +37,9 @@ public class Shooter {
          DcMotor.RunMode.RUN_USING_ENCODER,
          new PIDFCoefficients(kp, ki, kd, kf)
       );
-//      bootKicker1 = hardwareMap.get(Servo.class, "bootKicker1");
-//      bootKicker1.setPosition(1);
+      bootKicker1 = hardwareMap.get(Servo.class, "bootKicker1") ;
+       bootKicker1.setDirection(Servo.Direction.REVERSE);
+      bootKicker1.setPosition(0);
       bootKicker2 = hardwareMap.get(Servo.class, "bootKicker2");
       bootKicker2.setPosition(0);
    }
@@ -80,12 +82,12 @@ public class Shooter {
 
    public void shoot() {
       if (this.isVelocityReached()) {
-//         bootKicker1.setPosition(0.532);
+         bootKicker1.setPosition(shootPosition);
          bootKicker2.setPosition(shootPosition);
          Wait.mySleep(shootDelay);
-//         bootKicker1.setPosition(1);
+         bootKicker1.setPosition(0);
          bootKicker2.setPosition(0);
-         Wait.mySleep(shootDelay/3);
+         Wait.mySleep((long) (shootDelay/divideShootTime));
       }
    }
 }

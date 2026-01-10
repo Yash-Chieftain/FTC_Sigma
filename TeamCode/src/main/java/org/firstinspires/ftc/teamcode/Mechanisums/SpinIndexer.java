@@ -22,7 +22,7 @@ public class SpinIndexer {
 
    public SpinIndexer(HardwareMap hardwareMap) {
       sections = new SpindexerSection[]{
-         new SpindexerSection(0.63, new double[]{0.234, 1}), // 0th section
+         new SpindexerSection(0.63, new double[]{0.245, 1}), // 0th section
          new SpindexerSection(0.137, new double[]{0.487}),// 1st section
          new SpindexerSection(0.371, new double[]{0, 0.737})// 2nd section
       };

@@ -91,6 +91,7 @@ public class TeleOpDrive extends LinearOpMode {
             speed = 1;
          }
 
+
          if (gamepad2.left_bumper && !gamepad2.x) {
             if (!spinIndexer.getIsCurrentIntake()) {
                spinIndexer.setPosition(Artifact.EMPTY, true);

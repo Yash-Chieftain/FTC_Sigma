@@ -15,8 +15,8 @@ public class Turret {
    public static double MOTOR_POWER = 0.3;
 
    // PD gains
-   public static double kp = 0.09;
-   public static double kd = 0.015;   // 👈 added
+   public static double kp = 0.017;
+   public static double kd = 0.025;   // 👈 added
    public static double maxPower = 0.5;
 
 
@@ -29,7 +29,6 @@ public class Turret {
 
    public Turret(HardwareMap hardwareMap) {
       turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
-
       turretMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
       turretMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
    }

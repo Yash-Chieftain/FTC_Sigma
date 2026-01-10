@@ -18,7 +18,6 @@ public class Intake {
 
    public Intake(HardwareMap hardwareMap) {
       motor = hardwareMap.get(DcMotor.class, "intake");
-      motor.setDirection(DcMotorSimple.Direction.REVERSE);
       stopIntake = hardwareMap.get(Servo.class, "stopIntake");
       stopIntake.setPosition(1);
    }
