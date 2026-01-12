@@ -53,7 +53,7 @@ public class SpinIndexer {
    }
 
    private void setServoPosition(double position){
-      leftSpinIndexer.setPosition(0.04 + position);
+      leftSpinIndexer.setPosition(position);
       rightSpinIndexer.setPosition(position);
    }
 

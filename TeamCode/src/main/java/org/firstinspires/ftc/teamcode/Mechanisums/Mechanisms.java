@@ -61,10 +61,6 @@ public class Mechanisms {
       if (shooter.isVelocityReached() && colorSensing.shootingDetected) {
          Wait.mySleep(actionWait);
          shooter.shoot();
-         while (colorSensing.shootingDetected && shootTimer.milliseconds() < 1000) {
-            shooter.shoot();
-            this.update();
-         }
          shootTimer.reset();
          spinIndexer.setSectionArtifact(shootState, Artifact.EMPTY);
          shootState++;
@@ -194,8 +190,8 @@ public class Mechanisms {
 
    public void startShooter() {
       shooter.startShooter();
+      intake.startIntake();
    }
-
    public void stopShooter() {
       shooter.stopShooter();
    }

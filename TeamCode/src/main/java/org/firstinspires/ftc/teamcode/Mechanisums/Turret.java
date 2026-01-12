@@ -43,7 +43,7 @@ public class Turret {
 //        while (!magneticSensor.getState()) {
 //            turretMotor.setPower(turretInitPower);
 //        }
-//        maxtickslimit = turretMotor.getCurrentPosition();
+//        maxtickslimit = tu  rretMotor.getCurrentPosition();
 //        while (!magneticSensor.getState()) {
 //            turretMotor.setPower(-turretInitPower);
 //        }

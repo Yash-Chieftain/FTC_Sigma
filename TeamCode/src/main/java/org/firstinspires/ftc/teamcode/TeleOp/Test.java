@@ -27,7 +27,7 @@ public class Test extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         follower = Constants.createFollower(hardwareMap);
         mechanisms = new Mechanisms(hardwareMap);
-        mechanisms.setSpinIndexerState(new Artifact[]{Artifact.PURPLE, Artifact.PURPLE, Artifact.GREEN});
+
         waitForStart();
         follower.startTeleopDrive(true);
         follower.update();
@@ -37,6 +37,8 @@ public class Test extends LinearOpMode {
                 maxPower = 0.5;
             } else if (gamepad1.left_trigger > 0.5) {
                 maxPower = 0.2;
+            } else if (gamepad1.right_trigger > 0.5) {
+                maxPower = -1;
             } else {
                 maxPower = 1;
             }
@@ -73,7 +75,6 @@ public class Test extends LinearOpMode {
 
             if (gamepad2.right_bumper) {
                 mechanisms.startShooter();
-                mechanisms.startIntake();
             } else {
                 mechanisms.stopShooter();
             }

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Utils.Wait;
 
 @Configurable
 public class Shooter {
-    public static double velocity = 950;
+    public static double velocity = 1200;
     public static double kp = 250;
     public static double ki = 0;
     public static double kd = 0;
@@ -29,6 +29,7 @@ public class Shooter {
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightshoot");
         leftHood = hardwareMap.get(Servo.class, "leftHood");
         rightHood = hardwareMap.get(Servo.class, "rightHood");
+        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         leftHood.setDirection(Servo.Direction.REVERSE);
         rightHood.setPosition(0);
         leftHood.setPosition(0);
@@ -44,9 +45,9 @@ public class Shooter {
         );
         bootKicker1 = hardwareMap.get(Servo.class, "bootKicker1");
         bootKicker1.setDirection(Servo.Direction.REVERSE);
-        bootKicker1.setPosition(0);
+        bootKicker1.setPosition(0.01);
         bootKicker2 = hardwareMap.get(Servo.class, "bootKicker2");
-        bootKicker2.setPosition(0);
+        bootKicker2.setPosition(0.01);
     }
 
     public void startShooter() {
@@ -90,8 +91,8 @@ public class Shooter {
             bootKicker1.setPosition(shootPosition);
             bootKicker2.setPosition(shootPosition);
             Wait.mySleep(shootDelay);
-            bootKicker1.setPosition(0);
-            bootKicker2.setPosition(0);
+            bootKicker1.setPosition(0.01);
+            bootKicker2.setPosition(0.01);
             Wait.mySleep((long) (shootDelay / divideShootTime));
         }
     }
