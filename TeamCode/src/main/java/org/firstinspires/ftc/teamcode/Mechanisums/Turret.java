@@ -11,16 +11,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Configurable
 public class Turret {
 
-    // ================= CONFIG =================
 
     public static double MAX_DEGREES = 300;
     public static double TICKS_PER_REV = 537.6;
     public static double GEAR_RATIO = 1.0;
     public static double MOTOR_POWER = 0.3;
 
-    // PD gains
     public static double kp = 0.017;
-    public static double kd = 0.025;   // 👈 added
+    public static double kd = 0.025;
     public static double maxPower = 0.5;
     public static double turretInitPower = 0.3;
 
@@ -52,9 +50,7 @@ public class Turret {
 //        minticklimit = turretMotor.getCurrentPosition();
     }
 
-    /**
-     * Call every loop
-     */
+
     public void update() {
         int targetTicks = degreesToTicks(targetDegrees);
 
@@ -80,9 +76,7 @@ public class Turret {
         return turretMotor.getCurrentPosition();
     }
 
-    /**
-     * PD control using Limelight tx
-     */
+
     public void alignLimeLight(double tx) {
         double error = tx;
         double derivative = error - lastError;

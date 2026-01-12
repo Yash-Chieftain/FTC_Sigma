@@ -152,7 +152,6 @@ public class Mechanisms {
             intake.stopIntake();
             intake.reverse();
          } else {
-            intake.reset();
             intake.startIntake();
          }
       }
