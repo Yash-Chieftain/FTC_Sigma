@@ -83,6 +83,7 @@ public class Shooter {
 
     public boolean isVelocityReached() {
         return Math.abs(getVelocity() - velocity) < 30;
+
     }
 
 

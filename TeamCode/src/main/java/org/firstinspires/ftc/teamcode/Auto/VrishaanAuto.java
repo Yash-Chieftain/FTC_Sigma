@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
 @Autonomous
 public class VrishaanAuto extends LinearOpMode {
-   public static double intakeDriveSpeed = 0.25;
+   public static double intakeDriveSpeed = 0.3;
    Follower follower;
    int pathState = 0;
    Mechanisms mechanisms;
@@ -31,7 +31,7 @@ public class VrishaanAuto extends LinearOpMode {
    public void runOpMode() throws InterruptedException {
 
       follower = Constants.createFollower(hardwareMap);
-      follower.setStartingPose(new Pose(34.298, 135.777, Math.toRadians(180)));
+      follower.setStartingPose(new Pose(33.740, 136.832, Math.toRadians(180)));
       follower.setMaxPower(0.8);
       mechanisms = new Mechanisms(hardwareMap);
       mechanisms.setSpinIndexerState(new Artifact[]{
@@ -70,42 +70,41 @@ public class VrishaanAuto extends LinearOpMode {
          .addPath(
             new BezierLine(
                new Pose(43.390, 84.033),
-               new Pose(13.782, 83.878)
+               new Pose(23.782, 83.878)
             )
          )
          .setTangentHeadingInterpolation()
          // Path4
          .addPath(
-            new BezierCurve(
-               new Pose(13.782, 83.878),
-               new Pose(48.386, 75.980),
-               new Pose(14.073, 73.871)
-            )
+            new BezierLine(
+               new Pose(23.782, 83.878),
+               new Pose(23.886, 83.980)
+               )
          )
          .setLinearHeadingInterpolation(
             Math.toRadians(180),
-            Math.toRadians(360)
+            Math.toRadians(180)
          )
 
          // Path5
          .addPath(
             new BezierLine(
-               new Pose(14.073, 73.871),
+               new Pose(23.886, 83.980),
 
-               new Pose(60.070, 83.825)
+               new Pose(50.070, 83.825)
             )
          )
          .setLinearHeadingInterpolation(
-            Math.toRadians(360),
+            Math.toRadians(180),
             Math.toRadians(135)
          )
 
          // Path6
          .addPath(
             new BezierLine(
-               new Pose(60.070, 83.825),
+               new Pose(50.070, 83.825),
 
-               new Pose(46.635, 60.550)
+               new Pose(56.635, 50.550)
             )
          )
          .setLinearHeadingInterpolation(
@@ -116,7 +115,7 @@ public class VrishaanAuto extends LinearOpMode {
          // Path7
          .addPath(
             new BezierLine(
-               new Pose(46.635, 60.550),
+               new Pose(56.635, 50.550),
 
                new Pose(18.073, 60.231)
             )
@@ -165,19 +164,19 @@ public class VrishaanAuto extends LinearOpMode {
       while (opModeIsActive()) {
          if (!follower.isBusy()) {
             if (pathState == 0 || pathState == 4 || pathState == 7 || pathState == 10) {
-
-
                while (!mechanisms.shoot(targetMotif)) {
                   mechanisms.update();
+
                }
                mechanisms.startIntake();
-            } else if (pathState == 3 || pathState == 6 || pathState == 8) {
+
+            } else if (pathState == 3 || pathState == 7 || pathState == 8) {
                mechanisms.slowIntake();
             }
             pathState++;
             if (pathState == 1 || pathState == 4 || pathState == 7) {
                follower.followPath(new PathChain(myPath.getPath(pathState)), false);
-            } else if (pathState == 2 || pathState == 7 || pathState == 10) {
+            } else if (pathState == 2 || pathState == 6 || pathState == 10) {
                follower.followPath(new PathChain(myPath.getPath(pathState)), intakeDriveSpeed, true);
             } else if (pathState == 3 || pathState == 4) {
                sleep(1500);
@@ -187,6 +186,7 @@ public class VrishaanAuto extends LinearOpMode {
          } else {
             if (pathState == 2 || pathState == 7 || pathState == 10) {
                mechanisms.startIntake();
+               mechanisms.startShooter();
             } else if (pathState == 3 || pathState == 7 || pathState == 10) {
                mechanisms.validateArtifacts();
             }

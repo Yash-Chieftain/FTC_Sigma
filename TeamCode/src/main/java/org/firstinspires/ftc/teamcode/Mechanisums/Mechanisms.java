@@ -152,6 +152,8 @@ public class Mechanisms {
          }
       }
    }
+   public void AutoAllign(){
+   }
 
    public void stopIntake() {
       intake.stopIntake();

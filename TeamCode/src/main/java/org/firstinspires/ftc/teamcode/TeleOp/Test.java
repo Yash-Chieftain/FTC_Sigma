@@ -11,6 +11,8 @@ import com.sun.tools.javac.code.Attribute;
 import org.firstinspires.ftc.teamcode.Mechanisums.Mechanisms;
 import org.firstinspires.ftc.teamcode.Mechanisums.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanisums.SpinIndexer;
+import org.firstinspires.ftc.teamcode.Mechanisums.Turret;
+import org.firstinspires.ftc.teamcode.RobotConstants;
 import org.firstinspires.ftc.teamcode.Utils.Artifact;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -27,7 +29,6 @@ public class Test extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         follower = Constants.createFollower(hardwareMap);
         mechanisms = new Mechanisms(hardwareMap);
-
         waitForStart();
         follower.startTeleopDrive(true);
         follower.update();
@@ -77,6 +78,9 @@ public class Test extends LinearOpMode {
                 mechanisms.startShooter();
             } else {
                 mechanisms.stopShooter();
+            }
+            if (gamepad2.dpad_up){
+
             }
 
             if(gamepad2.right_bumper && gamepad2.aWasPressed()){
