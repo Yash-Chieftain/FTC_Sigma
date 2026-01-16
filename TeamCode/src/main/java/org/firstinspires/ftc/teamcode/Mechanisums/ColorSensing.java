@@ -14,16 +14,16 @@ import org.firstinspires.ftc.teamcode.Utils.Artifact;
 @Configurable
 public class ColorSensing {
    public static double intakeColorSensorThreshold = 4;
-   public static double shootingColorSensorThreshold = 4;
+   public static double shootingColorSensorThreshold = 3.7;
    public static double greenPWM = 0.5;
    public static double purplePWM = 0.7;
    public static double redPWM = 0.3;
    public static long blinkDurationMs = 1000;     // total blink time
    public static long blinkIntervalMs = 150;      // blink speed
 
-   RevColorSensorV3 intakeColorSensor1, intakeColorSensor2, shootingColorSensor1,shootingColorSensor2;
+   RevColorSensorV3 intakeColorSensor1, intakeColorSensor2, shootingColorSensor1, shootingColorSensor2;
    boolean intakeDetected1, intakeDetected2, shootingDetected;
-   NormalizedRGBA intakeRGBA1, intakeRGBA2, shootingRGBA1,shootingRGBA2 ;
+   NormalizedRGBA intakeRGBA1, intakeRGBA2, shootingRGBA1, shootingRGBA2;
    Servo led;
    private long blinkStartTime = 0;
    private boolean isBlinking = false;
@@ -75,7 +75,7 @@ public class ColorSensing {
       intakeDetected2 = intakeColorSensor2.getDistance(DistanceUnit.CM) < intakeColorSensorThreshold;
       shootingDetected = shootingColorSensor1.getDistance(DistanceUnit.CM) < shootingColorSensorThreshold || shootingColorSensor2.getDistance(DistanceUnit.CM) < shootingColorSensorThreshold;
 
-      if (intakeDetected1 && intakeDetected2) {
+      if (intakeDetected1 || intakeDetected2) {
          intakeRGBA1 = intakeColorSensor1.getNormalizedColors();
          intakeRGBA2 = intakeColorSensor2.getNormalizedColors();
 
@@ -83,7 +83,8 @@ public class ColorSensing {
             intakeRGBA1.green > intakeRGBA1.blue ? greenPWM : purplePWM
          );
 
-      } else if (shootingDetected) {
+      }
+      if(shootingDetected) {
          shootingRGBA1 = shootingColorSensor1.getNormalizedColors();
          shootingRGBA2 = shootingColorSensor2.getNormalizedColors();
 
@@ -101,7 +102,7 @@ public class ColorSensing {
       return String.format(
          "Intake1: dist=%.2f r=%.2f g=%.2f b=%.2f | " +
             "Intake2: dist=%.2f r=%.2f g=%.2f b=%.2f | " +
-            "Shooting1: dist=%.2f r=%.2f g=%.2f b=%.2f"+
+            "Shooting1: dist=%.2f r=%.2f g=%.2f b=%.2f" +
             "Shooting2: dist=%.2f r=%.2f g=%.2f b=%.2f",
          intakeColorSensor1.getDistance(DistanceUnit.CM),
          (intakeRGBA1 != null ? intakeRGBA1.red : 0),
@@ -123,17 +124,21 @@ public class ColorSensing {
    }
 
 
+   public Artifact getSecondIntakeColorDetected() {
+      this.update();
+      Artifact intake2;
+      if (intakeDetected2) {
+         intake2 = (intakeRGBA2.green > intakeRGBA2.blue) ? Artifact.GREEN : Artifact.PURPLE;
+         return intake2;
+      }
+      return Artifact.EMPTY;
+   }
    public Artifact getIntakeColorDetected() {
       this.update();
-      Artifact intake1, intake2;
-      if (intakeDetected1 && intakeDetected2) {
+      Artifact intake1;
+      if (intakeDetected1) {
          intake1 = (intakeRGBA1.green > intakeRGBA1.blue) ? Artifact.GREEN : Artifact.PURPLE;
-         intake2 = (intakeRGBA2.green > intakeRGBA2.blue) ? Artifact.GREEN : Artifact.PURPLE;
-         if (intake1 == intake2) {
-            return intake1;
-         } else {
-            return Artifact.ANY;
-         }
+         return intake1;
       }
       return Artifact.EMPTY;
    }

@@ -24,11 +24,13 @@ public class Test extends LinearOpMode {
     int spinIndexerIndex = 0;
 
     boolean isPark = true;
+    Artifact[] pattern = new Artifact[]{Artifact.GREEN, Artifact.PURPLE, Artifact.PURPLE};
 
     @Override
     public void runOpMode() throws InterruptedException {
         follower = Constants.createFollower(hardwareMap);
         mechanisms = new Mechanisms(hardwareMap);
+        mechanisms.setTurrentTicks(-283);
         waitForStart();
         follower.startTeleopDrive(true);
         follower.update();
@@ -52,6 +54,10 @@ public class Test extends LinearOpMode {
                 spinIndexerIndex += 1;
                 spinIndexerIndex = spinIndexerIndex % 3;
                 mechanisms.setSpinIndexerShootingPosition(spinIndexerIndex);
+            }
+
+            if(gamepad2.x){
+                mechanisms.validateArtifacts();
             }
 
             if(gamepad1.yWasPressed()){
@@ -86,7 +92,7 @@ public class Test extends LinearOpMode {
             if(gamepad2.right_bumper && gamepad2.aWasPressed()){
                 mechanisms.shoot();
             }else if (gamepad2.a) {
-                mechanisms.shoot(new Artifact[]{Artifact.GREEN, Artifact.PURPLE, Artifact.PURPLE});
+                mechanisms.shoot(pattern);
             }
 
             follower.setMaxPower(maxPower);
@@ -96,6 +102,7 @@ public class Test extends LinearOpMode {
             telemetry.addData("State", mechanisms.getState());
             telemetry.addData("Color", mechanisms.getColorSensorValues());
             telemetry.addData("getTx", mechanisms.getTurnValue());
+            telemetry.addData("Sequence: ", mechanisms.getShootingSequenceString(pattern));
             telemetry.update();
             mechanisms.update();
         }

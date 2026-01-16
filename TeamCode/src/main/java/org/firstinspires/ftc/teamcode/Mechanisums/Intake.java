@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Configurable
 public class Intake {
-   public static double fastPower = 0.7;
-   public static double slowPower = 0.4;
+   public static double fastPower = 1;
+   public static double slowPower = 0.6;
    public static double reversePower = -0.3;
    public static double stopServo = 0.135;
 

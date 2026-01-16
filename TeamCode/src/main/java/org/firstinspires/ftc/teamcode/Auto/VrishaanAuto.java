@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
 @Autonomous
 public class VrishaanAuto extends LinearOpMode {
-   public static double intakeDriveSpeed = 0.3;
+   public static double intakeDriveSpeed = 0.35;
    Follower follower;
    int pathState = 0;
    Mechanisms mechanisms;
@@ -104,7 +104,7 @@ public class VrishaanAuto extends LinearOpMode {
             new BezierLine(
                new Pose(50.070, 83.825),
 
-               new Pose(56.635, 50.550)
+               new Pose(46.635, 62.500)
             )
          )
          .setLinearHeadingInterpolation(
@@ -115,9 +115,9 @@ public class VrishaanAuto extends LinearOpMode {
          // Path7
          .addPath(
             new BezierLine(
-               new Pose(56.635, 50.550),
+               new Pose(46.635, 62.500),
 
-               new Pose(18.073, 60.231)
+               new Pose(18.073, 62.500)
             )
          )
          .setTangentHeadingInterpolation()
@@ -125,7 +125,7 @@ public class VrishaanAuto extends LinearOpMode {
          // Path8
          .addPath(
             new BezierLine(
-               new Pose(18.073, 60.231),
+               new Pose(18.073, 65.500),
 
                new Pose(60.941, 84.135)
             )
@@ -163,16 +163,16 @@ public class VrishaanAuto extends LinearOpMode {
       waitForStart();
       while (opModeIsActive()) {
          if (!follower.isBusy()) {
-            if (pathState == 0 || pathState == 4 || pathState == 7 || pathState == 10) {
-               while (!mechanisms.shoot(targetMotif)) {
-                  mechanisms.update();
-
-               }
-               mechanisms.startIntake();
-
-            } else if (pathState == 3 || pathState == 7 || pathState == 8) {
-               mechanisms.slowIntake();
-            }
+//            if (pathState == 0 || pathState == 4 || pathState == 7 || pathState == 10) {
+//               while (!mechanisms.shoot(targetMotif)) {
+//                  mechanisms.update();
+//
+//               }
+//               mechanisms.startIntake();
+//
+//            } else if (pathState == 3 || pathState == 7 || pathState == 8) {
+//               mechanisms.slowIntake();
+//            }
             pathState++;
             if (pathState == 1 || pathState == 4 || pathState == 7) {
                follower.followPath(new PathChain(myPath.getPath(pathState)), false);
@@ -184,12 +184,12 @@ public class VrishaanAuto extends LinearOpMode {
                follower.followPath(myPath.getPath(pathState));
             }
          } else {
-            if (pathState == 2 || pathState == 7 || pathState == 10) {
-               mechanisms.startIntake();
-               mechanisms.startShooter();
-            } else if (pathState == 3 || pathState == 7 || pathState == 10) {
-               mechanisms.validateArtifacts();
-            }
+//            if (pathState == 2 || pathState == 7 || pathState == 10) {
+//               mechanisms.startIntake();
+//               mechanisms.startShooter();
+//            } else if (pathState == 3 || pathState == 7 || pathState == 10) {
+//               mechanisms.validateArtifacts();
+//            }
 
          }
          telemetry.addData("State: ", mechanisms.getState());

@@ -25,20 +25,8 @@ public class AutoRed extends LinearOpMode {
             Artifact.PURPLE, Artifact.GREEN, Artifact.PURPLE
     };
 
-    private DcMotor frontLeft, frontRight, backLeft, backRight;
-
     @Override
     public void runOpMode() throws InterruptedException {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(109.710, 135.770, Math.toRadians(0)));
         follower.setMaxPower(0.8);

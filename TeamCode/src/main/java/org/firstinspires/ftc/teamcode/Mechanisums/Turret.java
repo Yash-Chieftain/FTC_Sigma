@@ -28,8 +28,8 @@ public class Turret {
     private double targetDegrees = 0;
     // PD state
     private double lastError = 0;
-    double minticklimit = Double.NEGATIVE_INFINITY;
-    double maxtickslimit = Double.POSITIVE_INFINITY;
+    double minticklimit = -1700;
+    double maxtickslimit = 0;
 
 
     public Turret(HardwareMap hardwareMap) {
@@ -77,6 +77,12 @@ public class Turret {
     }
 
 
+    public void setTurretTicks(int ticks){
+        turretMotor.setTargetPosition(ticks);
+        turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turretMotor.setPower(maxPower);
+    }
+
     public void alignLimeLight(double tx) {
         double error = tx;
         double derivative = error - lastError;
@@ -84,13 +90,18 @@ public class Turret {
         double power = (kp * error) + (kd * derivative);
 
         power = (Math.max(-maxPower, Math.min(maxPower, power)));
+        if(!turretMotor.isBusy()){
+            turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
 
-        if (power < 0) {
+        if (power > 0) {
             if (turretMotor.getCurrentPosition() < minticklimit) {
+                turretMotor.setPower(0);
                 return;
             }
-        } else if (power > 0) {
+        } else if (power < 0) {
             if (turretMotor.getCurrentPosition() > maxtickslimit) {
+                turretMotor.setPower(0);
                 return;
             }
 

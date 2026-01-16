@@ -2,22 +2,23 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Mechanisums.Mechanisms;
 import org.firstinspires.ftc.teamcode.Utils.Artifact;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+import java.net.HttpURLConnection;
+
 @Configurable
 @Autonomous
-public class AutoBlue extends LinearOpMode {
-   public static double intakeDriveSpeed = 0.28;
+public class AutoBlueTurret extends LinearOpMode {
+   public static double intakeDriveSpeed = 0.29;
    Follower follower;
    int pathState = 0;
    Mechanisms mechanisms;
@@ -31,7 +32,7 @@ public class AutoBlue extends LinearOpMode {
 
       follower = Constants.createFollower(hardwareMap);
       follower.setStartingPose(new Pose(34.298, 135.777, Math.toRadians(180)));
-      follower.setMaxPower(1);
+      follower.setMaxPower(0.9);
       mechanisms = new Mechanisms(hardwareMap);
       mechanisms.setSpinIndexerState(new Artifact[]{
          Artifact.PURPLE, Artifact.GREEN, Artifact.PURPLE
@@ -40,130 +41,87 @@ public class AutoBlue extends LinearOpMode {
 
       PathChain myPath = follower
          .pathBuilder()
+
          // Path1
          .addPath(
             new BezierLine(
-               new Pose(34.298, 135.777),
-               new Pose(55.000, 83.500)
+               new Pose(34.340, 135.955),
+               new Pose(54.000, 83.500)
             )
          )
-         .setLinearHeadingInterpolation(
-            Math.toRadians(180),
-            Math.toRadians(137)
-         )
+         .setConstantHeadingInterpolation(Math.toRadians(180))
 
          // Path2
          .addPath(
             new BezierLine(
-               new Pose(55.000, 83.500),
-               new Pose(44.000, 83.500)
+               new Pose(50.000, 83.500),
+               new Pose(42.000, 83.500)
             )
          )
-         .setLinearHeadingInterpolation(
-            Math.toRadians(137),
-            Math.toRadians(180)
-         )
+         .setConstantHeadingInterpolation(Math.toRadians(180))
 
          // Path3
          .addPath(
             new BezierLine(
-               new Pose(44.000, 83.500),
-               new Pose(16.000, 83.500)
+               new Pose(42.000, 83.500),
+               new Pose(20.000, 83.500)
             )
          )
          .setTangentHeadingInterpolation()
-         // Path5
+
+         // Path4
          .addPath(
             new BezierLine(
-               new Pose(16.000, 83.000),
-               new Pose(55.000, 83.500)
+               new Pose(20.000, 83.500),
+               new Pose(50.000, 83.500)
             )
          )
-         .setLinearHeadingInterpolation(
-            Math.toRadians(180),
-            Math.toRadians(137)
+         .setConstantHeadingInterpolation(Math.toRadians(180))
+
+         // Path5
+         .addPath(
+            new BezierCurve(
+               new Pose(50.000, 83.500),
+               new Pose(65.100, 57.552),
+               new Pose(42.000, 60.200)
+            )
          )
+         .setConstantHeadingInterpolation(Math.toRadians(180))
 
          // Path6
          .addPath(
             new BezierLine(
-               new Pose(55.000, 83.500),
-               new Pose(44.000, 60.500)
+               new Pose(42.000, 60.200),
+               new Pose(20.000, 60.200)
             )
          )
-         .setLinearHeadingInterpolation(
-            Math.toRadians(137),
-            Math.toRadians(180)
-         )
+         .setTangentHeadingInterpolation()
 
          // Path7
          .addPath(
             new BezierLine(
-               new Pose(44.000, 60.500),
-               new Pose(16.000, 60.500)
+               new Pose(20.000, 60.200),
+               new Pose(50.000, 82.500)
             )
          )
-         .setTangentHeadingInterpolation()
-
-         // Path8
-         .addPath(
-            new BezierLine(
-               new Pose(16.000, 60.500),
-               new Pose(55.000, 83.500)
-            )
-         )
-         .setLinearHeadingInterpolation(
-            Math.toRadians(180),
-            Math.toRadians(137)
-         )
-
-         // Path9
-         .addPath(
-            new BezierLine(
-               new Pose(55.000, 83.500),
-               new Pose(44.000, 35.500)
-            )
-         )
-         .setLinearHeadingInterpolation(
-            Math.toRadians(137),
-            Math.toRadians(180)
-         )
-
-         // Path10
-         .addPath(
-            new BezierLine(
-               new Pose(44.000, 35.500),
-               new Pose(15.000, 35.500)
-            )
-         )
-         .setTangentHeadingInterpolation()
-
-         // Path11
-         .addPath(
-            new BezierLine(
-               new Pose(15.000, 35.500),
-               new Pose(55.000, 83.500)
-            )
-         )
-         .setLinearHeadingInterpolation(
-            Math.toRadians(180),
-            Math.toRadians(137)
-         )
+         .setConstantHeadingInterpolation(Math.toRadians(180))
          .build();
-
-
       follower.followPath(myPath.getPath(pathState));
-
+      mechanisms.setTurrentTicks(-283);
       waitForStart();
       while (opModeIsActive()) {
          if (!follower.isBusy()) {
             if (pathState == 0 || pathState == 3 || pathState == 6 || pathState == 9) {
+               while (mechanisms.getTurnValue() != 0) {
+                  mechanisms.update();
+                  mechanisms.startShooter();
+               }
                while (!mechanisms.shoot(targetMotif)) {
                   mechanisms.update();
                }
                mechanisms.startIntake();
             } else if (pathState == 2 || pathState == 5 || pathState == 8) {
-               mechanisms.slowIntake();
+
             } else if (pathState == 3) {
                sleep(700);
             }
@@ -180,11 +138,16 @@ public class AutoBlue extends LinearOpMode {
                mechanisms.startIntake();
             }
             if (pathState == 3 || pathState == 6 || pathState == 9) {
-               mechanisms.validateArtifacts();
+               if (follower.getCurrentTValue() < 0.4) {
+                  mechanisms.startIntake();
+               } else {
+                  mechanisms.readyToShoot(targetMotif);
+               }
+               mechanisms.rampUpShooter();
             }
-
          }
          telemetry.addData("State: ", mechanisms.getState());
+         telemetry.update();
          mechanisms.update();
          follower.update();
       }
