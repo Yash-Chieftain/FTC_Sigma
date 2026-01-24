@@ -1,17 +1,13 @@
 package org.firstinspires.ftc.teamcode.Mechanisums;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Configurable
 public class Turret {
-
-
     public static double MAX_DEGREES = 300;
     public static double TICKS_PER_REV = 537.6;
     public static double GEAR_RATIO = 1.0;
@@ -21,6 +17,7 @@ public class Turret {
     public static double kd = 0.025;
     public static double maxPower = 0.5;
     public static double turretInitPower = 0.3;
+    public static double turretOffset = 2;
 
 
     private DcMotorEx turretMotor;
@@ -28,8 +25,8 @@ public class Turret {
     private double targetDegrees = 0;
     // PD state
     private double lastError = 0;
-    double minticklimit = -1700;
-    double maxtickslimit = 0;
+    double minticklimit = -500;
+    double maxtickslimit = 500;
 
 
     public Turret(HardwareMap hardwareMap) {
@@ -84,7 +81,7 @@ public class Turret {
     }
 
     public void alignLimeLight(double tx) {
-        double error = tx;
+        double error = tx + turretOffset;
         double derivative = error - lastError;
 
         double power = (kp * error) + (kd * derivative);
@@ -108,8 +105,11 @@ public class Turret {
         }
 
         turretMotor.setPower(-power);
-
         lastError = error;
+    }
+
+    public void setPower(double power){
+        turretMotor.setPower(power);
     }
 
     public double wrapDegrees(double deg) {

@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Intake {
    public static double fastPower = 1;
    public static double slowPower = 0.6;
-   public static double reversePower = -0.3;
+   public static double reversePower = -1;
    public static double stopServo = 0.135;
 
    DcMotor motor;
@@ -18,6 +18,7 @@ public class Intake {
 
    public Intake(HardwareMap hardwareMap) {
       motor = hardwareMap.get(DcMotor.class, "intake");
+      motor.setDirection(DcMotorSimple.Direction.REVERSE);
       stopIntake = hardwareMap.get(Servo.class, "stopIntake");
       stopIntake.setPosition(1);
    }

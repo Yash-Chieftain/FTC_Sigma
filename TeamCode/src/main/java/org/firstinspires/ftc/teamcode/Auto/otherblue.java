@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
 @Autonomous
-public class AutoBlueTurret extends LinearOpMode {
-   public static double intakeDriveSpeed = 0.29;
+public class otherblue extends LinearOpMode {
+   public static double intakeDriveSpeed = 0.25;
    Follower follower;
    int pathState = 0;
    Mechanisms mechanisms;
@@ -39,6 +39,7 @@ public class AutoBlueTurret extends LinearOpMode {
 
       PathChain myPath = follower
          .pathBuilder()
+
          // Path1
          .addPath(
             new BezierLine(
@@ -103,7 +104,6 @@ public class AutoBlueTurret extends LinearOpMode {
          )
          .setConstantHeadingInterpolation(Math.toRadians(180))
          .build();
-
       follower.followPath(myPath.getPath(pathState));
       mechanisms.setTurretTicks(-283);
       waitForStart();
@@ -124,13 +124,13 @@ public class AutoBlueTurret extends LinearOpMode {
                follower.followPath(new PathChain(myPath.getPath(pathState)), false);
             } else if (pathState == 2 || pathState == 5 || pathState == 8) {
                follower.followPath(new PathChain(myPath.getPath(pathState)), intakeDriveSpeed, true);
-            } else if (pathState == 3 || pathState == 6 || pathState == 9) {
+            } else if (pathState == 3|| pathState == 6|| pathState == 9) {
                follower.followPath(new PathChain(PedroUtils.getPath(follower.getPose(), myPath.getPath(pathState).endPose())));
             } else {
                follower.followPath(myPath.getPath(pathState));
             }
          } else {
-            if (pathState == 0) {
+            if(pathState == 0){
                mechanisms.readyToShoot(targetMotif);
                mechanisms.rampUpShooter();
             }
@@ -142,19 +142,15 @@ public class AutoBlueTurret extends LinearOpMode {
             }
 
             if (pathState == 3 || pathState == 6 || pathState == 9) {
-                  if(follower.getCurrentTValue() < 0.4){
-                     mechanisms.readyToShoot(targetMotif);
-                  }else if (mechanisms.getNoOfArtifacts() < 3) {
-                     mechanisms.startIntake();
-                  }else{
-                     mechanisms.reverseIntake();
-                  }
-
+               if (follower.getCurrentTValue() < 0.4 && !(mechanisms.getNoOfArtifacts() < 3)) {
+                  mechanisms.startIntake();
+               } else {
+                  mechanisms.readyToShoot(targetMotif);
+               }
                mechanisms.rampUpShooter();
             }
          }
          telemetry.addData("State: ", mechanisms.getState());
-         telemetry.addData("Pose", follower.getPose().toString());
          telemetry.update();
          mechanisms.update();
          follower.update();

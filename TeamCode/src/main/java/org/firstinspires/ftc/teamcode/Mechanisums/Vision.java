@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.Mechanisums;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import java.util.List;
 
 
 @Configurable
@@ -12,8 +15,8 @@ public class Vision {
    public static double kD = 0.004;
    public static double maxPower = 0.45;
    public static double dist_tolerance = 2;
-   private static double limelightAngleMounted = 12;
-   private static double limelightLensHeight = 11.5;
+   private static double limelightAngleMounted = 21;
+   private static double limelightLensHeight = 13;
    private static double goalHeightInches = 29.5;
    Limelight3A limelight;
    private double previousTx = 0;
@@ -24,6 +27,10 @@ public class Vision {
       limelight = hardwareMap.get(Limelight3A.class, "limelight");
       limelight.pipelineSwitch(0);
       limelight.start();
+   }
+
+   public void pipelineSwitch(int index){
+      limelight.pipelineSwitch(index);
    }
 
    public double getDistance() {
@@ -72,13 +79,35 @@ public class Vision {
       return turnPower;
    }
 
+   public int getID() {
+      LLResult result = limelight.getLatestResult();
+      List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
+      if (fiducials != null && !fiducials.isEmpty()) {
+         for (LLResultTypes.FiducialResult fid : fiducials) {
+            int tagId = fid.getFiducialId();
+            return tagId;
+         }
+      }
+      return 0;
+   }
+
+
    public double getTx() {
       return previousTx;
    }
+
+   public double getTy() {
+      LLResult result = limelight.getLatestResult();
+      if (result.isValid()) {
+         return result.getTx();
+      }
+      return -1;
+   }
+
    public boolean update() {
       LLResult result = limelight.getLatestResult();
       if (result.isValid()) {
-         this.previousTx =  result.getTx();
+         this.previousTx = result.getTx();
       }
       return result.isValid();
 

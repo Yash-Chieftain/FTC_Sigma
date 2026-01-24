@@ -119,7 +119,6 @@ public class AutoBlueFar extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (!follower.isBusy()) {
-
                 // -------- ACTIONS BEFORE MOVING TO NEXT PATH --------
                 if (pathState == 0 || pathState == 3 || pathState == 6) {
                     // Shoot paths

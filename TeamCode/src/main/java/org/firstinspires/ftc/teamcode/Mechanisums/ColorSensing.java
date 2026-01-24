@@ -21,9 +21,9 @@ public class ColorSensing {
    public static long blinkDurationMs = 1000;     // total blink time
    public static long blinkIntervalMs = 150;      // blink speed
 
-   RevColorSensorV3 intakeColorSensor1, intakeColorSensor2, shootingColorSensor1, shootingColorSensor2;
-   boolean intakeDetected1, intakeDetected2, shootingDetected;
-   NormalizedRGBA intakeRGBA1, intakeRGBA2, shootingRGBA1, shootingRGBA2;
+   RevColorSensorV3 intakeColorSensor1, shootingColorSensor1, shootingColorSensor2;
+   boolean intakeDetected1, shootingDetected;
+   NormalizedRGBA intakeRGBA1,  shootingRGBA1, shootingRGBA2;
    Servo led;
    private long blinkStartTime = 0;
    private boolean isBlinking = false;
@@ -32,7 +32,6 @@ public class ColorSensing {
 
    public ColorSensing(HardwareMap hardwareMap) {
       intakeColorSensor1 = hardwareMap.get(RevColorSensorV3.class, "intakeColorSensor1");
-      intakeColorSensor2 = hardwareMap.get(RevColorSensorV3.class, "intakeColorSensor2");
       shootingColorSensor1 = hardwareMap.get(RevColorSensorV3.class, "shootingColorSensor1");
       shootingColorSensor2 = hardwareMap.get(RevColorSensorV3.class, "shootingColorSensor2");
       led = hardwareMap.get(Servo.class, "led");
@@ -67,17 +66,14 @@ public class ColorSensing {
    @SuppressLint("DefaultLocale")
    public String update() {
       intakeRGBA1 = null;
-      intakeRGBA2 = null;
       shootingRGBA1 = null;
       shootingRGBA2 = null;
 
       intakeDetected1 = intakeColorSensor1.getDistance(DistanceUnit.CM) < intakeColorSensorThreshold;
-      intakeDetected2 = intakeColorSensor2.getDistance(DistanceUnit.CM) < intakeColorSensorThreshold;
       shootingDetected = shootingColorSensor1.getDistance(DistanceUnit.CM) < shootingColorSensorThreshold || shootingColorSensor2.getDistance(DistanceUnit.CM) < shootingColorSensorThreshold;
 
-      if (intakeDetected1 || intakeDetected2) {
+      if (intakeDetected1) {
          intakeRGBA1 = intakeColorSensor1.getNormalizedColors();
-         intakeRGBA2 = intakeColorSensor2.getNormalizedColors();
 
          led.setPosition(
             intakeRGBA1.green > intakeRGBA1.blue ? greenPWM : purplePWM
@@ -101,17 +97,16 @@ public class ColorSensing {
 
       return String.format(
          "Intake1: dist=%.2f r=%.2f g=%.2f b=%.2f | " +
-            "Intake2: dist=%.2f r=%.2f g=%.2f b=%.2f | " +
             "Shooting1: dist=%.2f r=%.2f g=%.2f b=%.2f" +
             "Shooting2: dist=%.2f r=%.2f g=%.2f b=%.2f",
          intakeColorSensor1.getDistance(DistanceUnit.CM),
          (intakeRGBA1 != null ? intakeRGBA1.red : 0),
          (intakeRGBA1 != null ? intakeRGBA1.green : 0),
          (intakeRGBA1 != null ? intakeRGBA1.blue : 0),
-         intakeColorSensor2.getDistance(DistanceUnit.CM),
-         (intakeRGBA2 != null ? intakeRGBA2.red : 0),
-         (intakeRGBA2 != null ? intakeRGBA2.green : 0),
-         (intakeRGBA2 != null ? intakeRGBA2.blue : 0),
+//         intakeColorSensor2.getDistance(DistanceUnit.CM),
+//         (intakeRGBA2 != null ? intakeRGBA2.red : 0),
+//         (intakeRGBA2 != null ? intakeRGBA2.green : 0),
+//         (intakeRGBA2 != null ? intakeRGBA2.blue : 0),
          shootingColorSensor1.getDistance(DistanceUnit.CM),
          (shootingRGBA1 != null ? shootingRGBA1.red : 0),
          (shootingRGBA1 != null ? shootingRGBA1.green : 0),
@@ -124,15 +119,15 @@ public class ColorSensing {
    }
 
 
-   public Artifact getSecondIntakeColorDetected() {
-      this.update();
-      Artifact intake2;
-      if (intakeDetected2) {
-         intake2 = (intakeRGBA2.green > intakeRGBA2.blue) ? Artifact.GREEN : Artifact.PURPLE;
-         return intake2;
-      }
-      return Artifact.EMPTY;
-   }
+//   public Artifact getSecondIntakeColorDetected() {
+//      this.update();
+//      Artifact intake2;
+//      if (intakeDetected2) {
+//         intake2 = (intakeRGBA2.green > intakeRGBA2.blue) ? Artifact.GREEN : Artifact.PURPLE;
+//         return intake2;
+//      }
+//      return Artifact.EMPTY;
+//   }
    public Artifact getIntakeColorDetected() {
       this.update();
       Artifact intake1;

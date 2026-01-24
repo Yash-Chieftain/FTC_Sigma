@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
 @TeleOp
-public class Test extends LinearOpMode {
-   public static double kp = 0.2;
+public class BlueTeleOp extends LinearOpMode {
+   public static double kp = 0.02;
    double maxPower = RobotConstants.TeleOp.maxPower;
    double turnSensitivity = RobotConstants.TeleOp.turnSensitivity;
    TelemetryManager telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -36,9 +36,11 @@ public class Test extends LinearOpMode {
 
    @Override
    public void runOpMode() throws InterruptedException {
+
       double y = 0, x = 0, rx = 0;
       follower = Constants.createFollower(hardwareMap);
       mechanisms = new Mechanisms(hardwareMap);
+      mechanisms.pipelineSwitch(RobotConstants.Mechanisms.Vision.blueAllianceGoalPipelineIndex);
       waitForStart();
       // Above is INIT
 
@@ -58,7 +60,7 @@ public class Test extends LinearOpMode {
             x = x * -1;
             rx = rx * -1;
          } else if (gamepad1.right_bumper) {
-            maxPower = 0;
+            maxPower = 0.4;
          }else {
             maxPower = 1;
          }
@@ -77,16 +79,21 @@ public class Test extends LinearOpMode {
             rx = -mechanisms.getTurnValue();
          } else if (Math.abs(rx) < 0.01 && (Math.abs(x) > 0.01 || Math.abs(y) > 0.01)) {
             if (!isStrafeStarted) {
-               heading = Math.toRadians(follower.getHeading());
+               heading = follower.getHeading();
                isStrafeStarted = true;
             }
-            double error = heading - Math.toRadians(follower.getHeading());
+            double error = heading - follower.getHeading();
             rx = error * kp;
 
          } else {
             isStrafeStarted = false;
          }
+         while (gamepad1.dpad_up){
+         }
 
+         if (gamepad1.aWasPressed()){
+            follower.breakFollowing();
+         }
 
          if (gamepad1.y) {
             mechanisms.park();
@@ -141,8 +148,6 @@ public class Test extends LinearOpMode {
          }
 
 
-
-
          if (gamepad2.yWasPressed()) {
             mechanisms.setSpinIndexerState(new Artifact[]{Artifact.EMPTY, Artifact.EMPTY, Artifact.EMPTY});
          }
@@ -157,11 +162,9 @@ public class Test extends LinearOpMode {
          telemetryManager.addData("Sequence: ", mechanisms.getShootingSequenceString(pattern));
          telemetryManager.addData("Target Velo: ", mechanisms.getTargetVelocity());
          telemetryManager.addData("hoodposition", hoodPosition);
-         telemetryManager.addData("heading: ", heading);
-         telemetryManager.addData("current heading: ", follower.getHeading());
-         telemetryManager.addData("rx", rx);
          telemetryManager.update(telemetry);
          mechanisms.update();
+
       }
    }
 }

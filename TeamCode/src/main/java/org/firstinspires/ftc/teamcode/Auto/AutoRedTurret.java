@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
 @Autonomous
-public class AutoBlueTurret extends LinearOpMode {
+public class AutoRedTurret extends LinearOpMode {
    public static double intakeDriveSpeed = 0.29;
    Follower follower;
    int pathState = 0;
@@ -30,38 +30,38 @@ public class AutoBlueTurret extends LinearOpMode {
    public void runOpMode() throws InterruptedException {
 
       follower = Constants.createFollower(hardwareMap);
-      follower.setStartingPose(new Pose(34.298, 135.777, Math.toRadians(180)));
-      follower.setMaxPower(0.95);
+      follower.setStartingPose(new Pose(108.947, 135.554, Math.toRadians(0)));
+      follower.setMaxPower(0.9);
       mechanisms = new Mechanisms(hardwareMap);
-      mechanisms.setSpinIndexerState(new Artifact[]{
-         Artifact.PURPLE, Artifact.GREEN, Artifact.PURPLE
-      });
-
       PathChain myPath = follower
          .pathBuilder()
+
          // Path1
          .addPath(
             new BezierLine(
-               new Pose(34.340, 135.955),
-               new Pose(54.000, 83.500)
+               new Pose(108.947, 135.554),
+               new Pose(90.000, 83.000)
             )
          )
-         .setConstantHeadingInterpolation(Math.toRadians(180))
+         .setLinearHeadingInterpolation(
+            Math.toRadians(0),
+            Math.toRadians(0)
+         )
 
          // Path2
          .addPath(
             new BezierLine(
-               new Pose(50.000, 83.500),
-               new Pose(42.000, 83.500)
+               new Pose(90.000, 83.000),
+               new Pose(103.000, 83.000)
             )
          )
-         .setConstantHeadingInterpolation(Math.toRadians(180))
+         .setTangentHeadingInterpolation()
 
          // Path3
          .addPath(
             new BezierLine(
-               new Pose(42.000, 83.500),
-               new Pose(20.000, 83.500)
+               new Pose(103.000, 83.000),
+               new Pose(123.000, 83.000)
             )
          )
          .setTangentHeadingInterpolation()
@@ -69,27 +69,33 @@ public class AutoBlueTurret extends LinearOpMode {
          // Path4
          .addPath(
             new BezierLine(
-               new Pose(20.000, 83.500),
-               new Pose(50.000, 83.500)
+               new Pose(123.000, 83.000),
+               new Pose(90.000, 83.000)
             )
          )
-         .setConstantHeadingInterpolation(Math.toRadians(180))
+         .setLinearHeadingInterpolation(
+            Math.toRadians(0),
+            Math.toRadians(0)
+         )
 
          // Path5
          .addPath(
             new BezierCurve(
-               new Pose(50.000, 83.500),
-               new Pose(65.100, 57.552),
-               new Pose(42.000, 60.200)
+               new Pose(90.000, 83.000),
+               new Pose(87.574, 58.654),
+               new Pose(99.000, 59.500)
             )
          )
-         .setConstantHeadingInterpolation(Math.toRadians(180))
+         .setLinearHeadingInterpolation(
+            Math.toRadians(0),
+            Math.toRadians(0)
+         )
 
          // Path6
          .addPath(
             new BezierLine(
-               new Pose(42.000, 60.200),
-               new Pose(20.000, 60.200)
+               new Pose(99.000, 59.500),
+               new Pose(123.000, 59.500)
             )
          )
          .setTangentHeadingInterpolation()
@@ -97,16 +103,35 @@ public class AutoBlueTurret extends LinearOpMode {
          // Path7
          .addPath(
             new BezierLine(
-               new Pose(20.000, 60.200),
-               new Pose(50.000, 82.500)
+               new Pose(123.000, 59.500),
+               new Pose(90.000, 83.000)
             )
          )
-         .setConstantHeadingInterpolation(Math.toRadians(180))
+         .setLinearHeadingInterpolation(
+            Math.toRadians(0),
+            Math.toRadians(0)
+         )
+
+         // Path8
+         .addPath(
+            new BezierLine(
+               new Pose(90.000, 83.000),
+               new Pose(105.000, 83.000)
+            )
+         )
+         .setTangentHeadingInterpolation()
+
          .build();
 
       follower.followPath(myPath.getPath(pathState));
-      mechanisms.setTurretTicks(-283);
+      mechanisms.setSpinIndexerState(new Artifact[]{
+         Artifact.PURPLE, Artifact.GREEN, Artifact.PURPLE
+      });
+      mechanisms.pipelineSwitch(2);
+      mechanisms.setTurretTicks(283);
       waitForStart();
+
+
       while (opModeIsActive()) {
          if (!follower.isBusy()) {
             if (pathState == 0 || pathState == 3 || pathState == 6 || pathState == 9) {
@@ -124,13 +149,13 @@ public class AutoBlueTurret extends LinearOpMode {
                follower.followPath(new PathChain(myPath.getPath(pathState)), false);
             } else if (pathState == 2 || pathState == 5 || pathState == 8) {
                follower.followPath(new PathChain(myPath.getPath(pathState)), intakeDriveSpeed, true);
-            } else if (pathState == 3 || pathState == 6 || pathState == 9) {
+            } else if (pathState == 3|| pathState == 6|| pathState == 9) {
                follower.followPath(new PathChain(PedroUtils.getPath(follower.getPose(), myPath.getPath(pathState).endPose())));
             } else {
                follower.followPath(myPath.getPath(pathState));
             }
          } else {
-            if (pathState == 0) {
+            if(pathState == 0){
                mechanisms.readyToShoot(targetMotif);
                mechanisms.rampUpShooter();
             }
@@ -142,19 +167,15 @@ public class AutoBlueTurret extends LinearOpMode {
             }
 
             if (pathState == 3 || pathState == 6 || pathState == 9) {
-                  if(follower.getCurrentTValue() < 0.4){
-                     mechanisms.readyToShoot(targetMotif);
-                  }else if (mechanisms.getNoOfArtifacts() < 3) {
-                     mechanisms.startIntake();
-                  }else{
-                     mechanisms.reverseIntake();
-                  }
-
+               if (follower.getCurrentTValue() < 0.4 && !(mechanisms.getNoOfArtifacts() < 3)) {
+                  mechanisms.startIntake();
+               } else {
+                  mechanisms.readyToShoot(targetMotif);
+               }
                mechanisms.rampUpShooter();
             }
          }
          telemetry.addData("State: ", mechanisms.getState());
-         telemetry.addData("Pose", follower.getPose().toString());
          telemetry.update();
          mechanisms.update();
          follower.update();

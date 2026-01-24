@@ -41,11 +41,11 @@ public class AutoRed extends LinearOpMode {
                 .addPath(
                         new BezierLine(new Pose(109.710, 135.770), new Pose(89.000, 83.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(51))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .addPath(
                         new BezierLine(new Pose(89.000, 83.500), new Pose(96.000, 83.077))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(51), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                 .addPath(
                         new BezierLine(new Pose(96.000, 83.077), new Pose(128.000, 83.500))

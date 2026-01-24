@@ -1,4 +1,9 @@
 package org.firstinspires.ftc.teamcode;
+
+import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+
+@Configurable
 public class RobotConstants {
     public static class Auto{
         public static double intakeDriveSpeed = 0.25;
@@ -6,6 +11,11 @@ public class RobotConstants {
 
     public static class TeleOp{
         public static double maxPower = 1;
+        public static double turnSensitivity = 0.75;
+        public static double kp = 0.02;
+        public static double ki = 0;
+        public static double kd = 0.002;
+        public static double kf = 0;
     }
 
     public static  class Mechanisms{
@@ -32,6 +42,10 @@ public class RobotConstants {
             private static double limelightAngleMounted = 12;
             private static double limelightLensHeight = 11.5;
             private static double goalHeightInches = 29.5;
+            public static int blueAllianceGoalPipelineIndex = 0;
+            public static int redAllianceGoalPipelineIndex = 2;
+            public static int motifPipelineIndex = 3;
+
         }
         public static class Turret{
             public static double MAX_DEGREES = 300;

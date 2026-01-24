@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Mechanisums;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -7,9 +8,10 @@ import org.firstinspires.ftc.teamcode.Utils.Artifact;
 import org.firstinspires.ftc.teamcode.Utils.ShootingSequence;
 import org.firstinspires.ftc.teamcode.Utils.Wait;
 
+@Configurable
 public class Mechanisms {
    public static long movementSleep = 200;
-   public static long actionWait = 200;
+   public static long actionWait = 300;
    Intake intake;
    Shooter shooter;
    SpinIndexer spinIndexer;
@@ -36,16 +38,84 @@ public class Mechanisms {
       parking = new Parking(hardwareMap);
    }
 
-   public double getTurnValue() {
-      return vision.alignTurnValue(0);
+   //Intake
+   public void stopIntake() {
+      intake.stopIntake();
+   }
+
+   public void slowIntake() {
+      intake.slowIntake();
+   }
+
+   public void reverseIntake() {
+      intake.reverse();
    }
 
 
-   public void readyToShoot(Artifact[] pattern){
+   public void startIntake() {
+      this.update();
+      intake.startIntake();
+      if (!spinIndexer.getIsCurrentIntake()) {
+         spinIndexer.setPosition(1);
+      }
+
+      Artifact intakeColorDetected = colorSensing.getIntakeColorDetected();
+      if (intakeColorDetected != Artifact.EMPTY && intakeColorDetected != Artifact.ANY) {
+         spinIndexer.setSectionArtifact(
+            spinIndexer.getCurrentPosition(),
+            intakeColorDetected
+         );
+         spinIndexer.setPosition(Artifact.EMPTY, true);
+         Wait.mySleep(movementSleep);
+
+         if (!spinIndexer.setPosition(Artifact.EMPTY, true)) {
+            intake.stopIntake();
+
+         } else {
+            intake.startIntake();
+         }
+      }
+   }
+
+
+   //Shooter
+
+   public void startShooter() {
+      shooter.startShooter();
+      intake.startIntake();
+   }
+
+   public void startLongshooter() {
+      shooter.startLongshooter();
+      intake.startIntake();
+   }
+
+   public void setShooterhood(double position) {
+      shooter.setHoodPosition(position);
+   }
+
+   public void startShortShooter() {
+      shooter.startShortShooter();
+   }
+
+
+   public void rampUpShooter() {
+      shooter.startShooter();
+   }
+
+   public double getTargetVelocity() {
+      return shooter.getTargetVelocity();
+   }
+
+   public void stopShooter() {
+      shooter.stopShooter();
+   }
+
+   public void readyToShoot(Artifact[] pattern) {
       if (spinIndexer.getArtifact(Artifact.ANY) == -1) {
          shootState = -1;
          shooter.stopShooter();
-         return ;
+         return;
       }
       if (shootState == -1) {
          shootState = 0;
@@ -56,7 +126,7 @@ public class Mechanisms {
       if (shootingSequences.length - 1 < shootState) {
          shootState = -1;
          shooter.stopShooter();
-         return ;
+         return;
       }
 
       spinIndexer.setPosition(shootingSequences[shootState].section, shootingSequences[shootState].shootingIndex);
@@ -88,16 +158,14 @@ public class Mechanisms {
          shootTimer.reset();
       }
 
-      if (shooter.isVelocityReached() && colorSensing.shootingDetected) {
+
+      if ((shooter.isVelocityReached() && colorSensing.shootingDetected) || shootTimer.milliseconds() > 1000) {
          Wait.mySleep(actionWait);
-         shooter.shoot();
+         while(!shooter.shoot());
          shootTimer.reset();
          spinIndexer.setSectionArtifact(shootingSequences[shootState].section, Artifact.EMPTY);
          shootState++;
-         Wait.mySleep(actionWait);
       }
-
-
       if (shootState > 2) {
          shooter.stopShooter();
          shootState = -1;
@@ -109,9 +177,12 @@ public class Mechanisms {
    }
 
    public void shoot() {
-      shooter.shoot();
+      if (shooter.shoot()) {
+         spinIndexer.setSectionArtifact(spinIndexer.getCurrentPosition(), Artifact.EMPTY);
+      }
    }
 
+   //SpinIndexer
    public void validateArtifacts() {
 //      if( colorSensing.getIntakeColorDetected() &&  intakeTimer.milliseconds()  200){
 //
@@ -161,53 +232,11 @@ public class Mechanisms {
       }
    }
 
-   public void park() {
-      parking.park();
+
+   public int getNoOfArtifacts() {
+      return spinIndexer.getNoOfArtifacts();
    }
 
-   public void unPark() {
-      parking.reset();
-   }
-
-   public void startIntake() {
-      this.update();
-      intake.startIntake();
-      if (!spinIndexer.getIsCurrentIntake()) {
-         spinIndexer.setPosition(1);
-      }
-
-      Artifact intakeColorDetected = colorSensing.getIntakeColorDetected();
-      if (intakeColorDetected != Artifact.EMPTY && intakeColorDetected != Artifact.ANY) {
-         spinIndexer.setSectionArtifact(
-            spinIndexer.getCurrentPosition(),
-            intakeColorDetected
-         );
-         spinIndexer.setSectionArtifact((spinIndexer.getCurrentPosition() + 1) % 3, colorSensing.getSecondIntakeColorDetected());
-         spinIndexer.setPosition(Artifact.EMPTY, true);
-         Wait.mySleep(movementSleep);
-
-         if (!spinIndexer.setPosition(Artifact.EMPTY, true)) {
-            intake.stopIntake();
-         } else {
-            intake.startIntake();
-         }
-      }
-   }
-
-   public void AutoAllign() {
-   }
-
-   public void stopIntake() {
-      intake.stopIntake();
-   }
-
-   public void slowIntake() {
-      intake.slowIntake();
-   }
-
-   public void reverseIntake() {
-      intake.reverse();
-   }
 
    public String getState() {
       return spinIndexer.getSpinIndexerState();
@@ -235,57 +264,61 @@ public class Mechanisms {
       }
    }
 
-   public void startShooter() {
-      shooter.startShooter();
-      intake.startIntake();
-   }
-
-   public void rampUpShooter() {
-      shooter.startShooter();
-   }
-
-   public void stopShooter() {
-      shooter.stopShooter();
-   }
 
    public String getShootingSequenceString(Artifact[] pattern) {
-      ShootingSequence[] sequence = spinIndexer.getBestShootingSequence(pattern);
-
-      if (sequence == null || sequence.length == 0) {
-         return "EMPTY";
-      }
-
-      StringBuilder sb = new StringBuilder();
-
-      for (int i = 0; i < sequence.length; i++) {
-         ShootingSequence s = sequence[i];
-         sb.append("[")
-            .append(i)
-            .append(": sec=")
-            .append(s.section)
-            .append(", idx=")
-            .append(s.shootingIndex)
-            .append("] ");
-
-      }
-
-      return sb.toString();
+      return spinIndexer.getShootingSequenceString(pattern);
    }
 
-   public void setTurrentTicks(int ticks) {
+   //Vision
+   public double getTurnValue() {
+      return vision.alignTurnValue(0);
+   }
+
+   public double getDistance() {
+      return vision.getDistance();
+   }
+
+   public double getTy() {
+      return vision.getTy();
+   }
+
+   public int getId() {
+      return vision.getID();
+   }
+
+   public void pipelineSwitch(int index) {
+      vision.pipelineSwitch(index);
+   }
+
+   //Turret
+
+   public void setTurretTicks(int ticks) {
       turret.setTurretTicks(ticks);
+   }
+
+   //Parking
+   public void park() {
+      parking.park();
+   }
+
+   public void unPark() {
+      parking.reset();
    }
 
    public void update() {
       colorSensing.update();
-      if (vision.update() && Math.abs(vision.getTx()) > 2) {
+
+      shooter.setShooter(vision.getDistance());
+      vision.update();
+
+      if (vision.update() && Math.abs(Turret.turretOffset - vision.getTx()) > 1) {
          turret.alignLimeLight(vision.getTx());
       } else {
-         turret.alignLimeLight(0);
-
-
+         turret.setPower(0);
       }
 
+      if (vision.update()) {
+         shooter.setShooter(vision.getDistance());
+      }
    }
 }
-

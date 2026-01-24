@@ -58,9 +58,9 @@ public class SpinIndexer {
 
    public SpinIndexer(HardwareMap hardwareMap) {
       sections = new SpindexerSection[]{
-         new SpindexerSection(0.647, new double[]{0.245, 1}), // 0th section
-         new SpindexerSection(0.142, new double[]{0.487}),// 1st section
-         new SpindexerSection(0.392, new double[]{0, 0.737})// 2nd section
+         new SpindexerSection(0.670, new double[]{0.246, 1}), // 0th section
+         new SpindexerSection(0.147, new double[]{0.508}),// 1st section
+         new SpindexerSection(0.400, new double[]{0, 0.740})// 2nd section
       };
       leftSpinIndexer = hardwareMap.get(Servo.class, "leftSpinIndexer");
       rightSpinIndexer = hardwareMap.get(Servo.class, "rightSpinIndexer");
@@ -301,6 +301,29 @@ public class SpinIndexer {
          output += (i + 1) + ": " + sections[i].currentArtifact;
       }
       return output;
+   }
+   public String getShootingSequenceString(Artifact[] pattern) {
+      ShootingSequence[] sequence = this.getBestShootingSequence(pattern);
+
+      if (sequence == null || sequence.length == 0) {
+         return "EMPTY";
+      }
+
+      StringBuilder sb = new StringBuilder();
+
+      for (int i = 0; i < sequence.length; i++) {
+         ShootingSequence s = sequence[i];
+         sb.append("[")
+            .append(i)
+            .append(": sec=")
+            .append(s.section)
+            .append(", idx=")
+            .append(s.shootingIndex)
+            .append("] ");
+
+      }
+
+      return sb.toString();
    }
 }
 

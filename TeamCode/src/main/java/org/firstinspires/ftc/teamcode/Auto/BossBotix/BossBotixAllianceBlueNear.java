@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.Auto.BossBotix;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
 @Autonomous
-public class AutoBlueTurret extends LinearOpMode {
+public class BossBotixAllianceBlueNear extends LinearOpMode {
    public static double intakeDriveSpeed = 0.29;
    Follower follower;
    int pathState = 0;
@@ -142,14 +142,16 @@ public class AutoBlueTurret extends LinearOpMode {
             }
 
             if (pathState == 3 || pathState == 6 || pathState == 9) {
-                  if(follower.getCurrentTValue() < 0.4){
-                     mechanisms.readyToShoot(targetMotif);
-                  }else if (mechanisms.getNoOfArtifacts() < 3) {
+               if (follower.getCurrentTValue() < 0.4) {
+                  if (mechanisms.getNoOfArtifacts() < 3) {
                      mechanisms.startIntake();
                   }else{
                      mechanisms.reverseIntake();
                   }
 
+               } else {
+                  mechanisms.readyToShoot(targetMotif);
+               }
                mechanisms.rampUpShooter();
             }
          }
@@ -161,3 +163,4 @@ public class AutoBlueTurret extends LinearOpMode {
       }
    }
 }
+

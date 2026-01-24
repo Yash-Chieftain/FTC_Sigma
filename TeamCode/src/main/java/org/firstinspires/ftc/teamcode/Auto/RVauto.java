@@ -50,7 +50,7 @@ public class RVauto extends LinearOpMode {
 
                new Pose(52.147, 84.234)
             )
-         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135)
+         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180)
          )
 
          // Path2
@@ -60,7 +60,7 @@ public class RVauto extends LinearOpMode {
 
                new Pose(43.724, 84.234)
             )
-         ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180)
+         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180)
          )
 
          // Path3
@@ -79,7 +79,7 @@ public class RVauto extends LinearOpMode {
 
                new Pose(52.348, 84.033)
             )
-         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135)
+         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180)
          )
 
          // Path5
@@ -89,7 +89,7 @@ public class RVauto extends LinearOpMode {
 
                new Pose(47.935, 60.499)
             )
-         ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
+         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
          // Path6
          .addPath(
@@ -109,7 +109,7 @@ public class RVauto extends LinearOpMode {
 
                new Pose(52.234, 83.596)
             )
-         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
          .build();
       follower.followPath(myPath.getPath(pathState));

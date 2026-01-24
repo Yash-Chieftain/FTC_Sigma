@@ -19,9 +19,9 @@ import java.io.DataInput;
 
 public class Constants {
    public static FollowerConstants followerConstants = new FollowerConstants()
-      .mass(11.7)
-      .forwardZeroPowerAcceleration(-34.804954715059665)
-      .lateralZeroPowerAcceleration(-60.34257600235443)
+      .mass(14.30)
+      .forwardZeroPowerAcceleration(-42.81166685890197)
+      .lateralZeroPowerAcceleration(-57.22026262179558)
       .centripetalScaling(0.0005)
       .translationalPIDFCoefficients(new PIDFCoefficients(0.2, 0, 0.02, 0.03))
       .headingPIDFCoefficients(new PIDFCoefficients(1.2, 0, 0.06, 0.01))
@@ -31,20 +31,20 @@ public class Constants {
    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
    public static MecanumConstants driveConstants = new MecanumConstants()
       .maxPower(1)
-      .rightFrontMotorName("frontRight")
-      .rightRearMotorName("backRight")
-      .leftRearMotorName("backLeft")
-      .leftFrontMotorName("frontLeft")
+      .rightFrontMotorName("RF")
+      .rightRearMotorName("RR")
+      .leftRearMotorName("LR")
+      .leftFrontMotorName("LF")
       .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
       .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
       .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
       .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD
       )
-      .xVelocity(74.37420942651946)
-      .yVelocity(55.73010301965428);
+      .xVelocity(61.962620532418796)
+      .yVelocity(42.87195785402312);
    public static PinpointConstants localizerConstants = new PinpointConstants()
       .forwardPodY(-3.46)
-      .strafePodX(-2.34)
+      .strafePodX(-2.97)
       .distanceUnit(DistanceUnit.INCH)
       .hardwareMapName("pinpoint")
       .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)

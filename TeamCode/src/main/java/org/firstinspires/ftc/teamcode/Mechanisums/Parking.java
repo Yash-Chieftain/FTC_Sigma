@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Configurable
 public class Parking {
     Servo leftPark, rightPark;
-    public static double parkPosition = 0.85;
+    public static double parkPosition = 1;
     public Parking(HardwareMap hardwareMap){
         leftPark = hardwareMap.get(Servo.class, "leftPark");
         rightPark = hardwareMap.get(Servo.class,"rightPark");
