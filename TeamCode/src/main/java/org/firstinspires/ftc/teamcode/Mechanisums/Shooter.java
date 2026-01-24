@@ -18,11 +18,11 @@ public class Shooter {
    public static double kf = 20.2;
    public static long shootDelay = 150;
    public static double shootPosition = 0.700;
-   public static double longshootpos = 0.67;
-   public static double shortshootpos = 0.125;
+   public static double longshootpos = 0.8;
+   public static double shortshootpos = 0.08;
    public static double divideShootTime = 1;
-   public static double longvelocity = 1400;
-   public static double shortvelocity = 1200;
+   public static double longvelocity = 1430;
+   public static double shortvelocity = 1150;
    public static double testVelocity = 1200;
 
    // Linear fit constants
@@ -45,7 +45,7 @@ public class Shooter {
       rightHood = hardwareMap.get(Servo.class, "rightHood");
       rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
       leftHood.setDirection(Servo.Direction.REVERSE);
-      setHoodPosition(1);
+      setHoodPosition(0.1);
       leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       leftMotor.setPIDFCoefficients(
          DcMotor.RunMode.RUN_USING_ENCODER,
@@ -75,9 +75,9 @@ public class Shooter {
          new PIDFCoefficients(kp, ki, kd, kf)
       );
 
-      leftMotor.setVelocity(testVelocity);
-      rightMotor.setVelocity(testVelocity);
-//      setHoodPosition(hood);
+      leftMotor.setVelocity(velocity);
+      rightMotor.setVelocity(velocity);
+      setHoodPosition(hood);
    }
 
    public void stopShooter() {
@@ -95,11 +95,19 @@ public class Shooter {
       return velocity;
    }
 
-   public boolean isVelocityReached() {
-      return Math.abs(getVelocity() - testVelocity) < 30;
-
+   public double getHoodPosition() {
+      return hood;
    }
 
+   public void setHoodPosition(double position) {
+      leftHood.setPosition(position);
+      rightHood.setPosition(position);
+   }
+
+   public boolean isVelocityReached() {
+      return Math.abs(getVelocity() - velocity) < 20;
+
+   }
 
    public boolean shoot() {
       if (this.isVelocityReached()) {
@@ -108,21 +116,25 @@ public class Shooter {
          Wait.mySleep(shootDelay);
          bootKicker1.setPosition(0.01);
          bootKicker2.setPosition(0.01);
-         Wait.mySleep((long)(shootDelay/divideShootTime));
+         Wait.mySleep((long) (shootDelay / divideShootTime));
          return true;
       }
       return false;
    }
 
    public void setShooter(double distance) {
-      double[] shooterValues = this.getShooterValuesPiecewise(distance);
-      hood = shooterValues[0];
-      velocity = shooterValues[1];
-   }
+      if (distance<33) {
+         hood=shortshootpos;
+         velocity=shortvelocity;
+         return;
+      } else if (distance>110) {
+         hood=longshootpos;
+         velocity=longvelocity;
+         return;
 
-   public void setHoodPosition(double position) {
-      leftHood.setPosition(position);
-      rightHood.setPosition(position);
+      }
+      hood = getHoodAngleByDistance(distance);
+      velocity = getVelocityByDistance(distance);
    }
 
    public void startLongshooter() {
@@ -135,7 +147,17 @@ public class Shooter {
       velocity = shortvelocity;
       startShooter();
       setHoodPosition(shortshootpos);
+
    }
+
+   public double getVelocityByDistance(double distance) {
+      return (distance - 33) * 5.55 + 950;
+   }
+
+   public double getHoodAngleByDistance(double distance) {
+      return (distance - 33) * 0.0038;
+   }
+
    public double[] getShooterValuesPiecewise(double d) {
 
       double hood, velocity;

@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode.Utils;
 
 public class Motif {
+
+   public static Artifact[] state = new Artifact[]{
+      Artifact.GREEN, Artifact.PURPLE, Artifact.PURPLE
+   };
+
    public static Artifact[] getMotif(int id) {
       if (id == 21) {
          return new Artifact[]{
@@ -21,7 +26,7 @@ public class Motif {
 
       }
       return new Artifact[]{
-         Artifact.PURPLE, Artifact.PURPLE, Artifact.PURPLE
+         Artifact.PURPLE, Artifact.GREEN, Artifact.PURPLE
       };
    }
 }

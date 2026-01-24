@@ -111,6 +111,10 @@ public class Mechanisms {
       shooter.stopShooter();
    }
 
+   public double getHoodPosition() {
+      return shooter.getHoodPosition();
+   }
+
    public void readyToShoot(Artifact[] pattern) {
       if (spinIndexer.getArtifact(Artifact.ANY) == -1) {
          shootState = -1;
@@ -161,7 +165,7 @@ public class Mechanisms {
 
       if ((shooter.isVelocityReached() && colorSensing.shootingDetected) || shootTimer.milliseconds() > 1000) {
          Wait.mySleep(actionWait);
-         while(!shooter.shoot());
+         while (!shooter.shoot()) ;
          shootTimer.reset();
          spinIndexer.setSectionArtifact(shootingSequences[shootState].section, Artifact.EMPTY);
          shootState++;
@@ -264,6 +268,9 @@ public class Mechanisms {
       }
    }
 
+   public void resetturret() {
+      turret.reset();
+   }
 
    public String getShootingSequenceString(Artifact[] pattern) {
       return spinIndexer.getShootingSequenceString(pattern);
@@ -295,6 +302,12 @@ public class Mechanisms {
    public void setTurretTicks(int ticks) {
       turret.setTurretTicks(ticks);
    }
+   public boolean isTurretBusy(){
+      return turret.isBusy();
+   }
+   public boolean isTurretAligned(){
+      return (Turret.turretOffset - vision.getTx()) < 1 && vision.update();
+   }
 
    //Parking
    public void park() {
@@ -304,6 +317,7 @@ public class Mechanisms {
    public void unPark() {
       parking.reset();
    }
+
 
    public void update() {
       colorSensing.update();
@@ -316,7 +330,7 @@ public class Mechanisms {
       } else {
          turret.setPower(0);
       }
-
+      Turret.updateTurretPosition((int) turret.getTicks());
       if (vision.update()) {
          shooter.setShooter(vision.getDistance());
       }

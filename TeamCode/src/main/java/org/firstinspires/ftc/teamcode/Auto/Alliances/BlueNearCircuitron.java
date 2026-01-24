@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.Auto.Alliances;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
@@ -10,15 +10,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Mechanisums.Mechanisms;
-import org.firstinspires.ftc.teamcode.RobotConstants;
 import org.firstinspires.ftc.teamcode.Utils.Artifact;
-import org.firstinspires.ftc.teamcode.Utils.Motif;
 import org.firstinspires.ftc.teamcode.Utils.PedroUtils;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
 @Autonomous
-public class AutoBlueTurret extends LinearOpMode {
+public class BlueNearCircuitron extends LinearOpMode {
    public static double intakeDriveSpeed = 0.29;
    Follower follower;
    int pathState = 0;
@@ -26,8 +24,6 @@ public class AutoBlueTurret extends LinearOpMode {
    Artifact[] targetMotif = new Artifact[]{
       Artifact.PURPLE, Artifact.GREEN, Artifact.PURPLE
    };
-
-   boolean motifUpdated = true;
 
 
    @Override
@@ -37,7 +33,9 @@ public class AutoBlueTurret extends LinearOpMode {
       follower.setStartingPose(new Pose(34.298, 135.777, Math.toRadians(180)));
       follower.setMaxPower(0.95);
       mechanisms = new Mechanisms(hardwareMap);
-      mechanisms.setSpinIndexerState(Motif.state);
+      mechanisms.setSpinIndexerState(new Artifact[]{
+         Artifact.PURPLE, Artifact.GREEN, Artifact.PURPLE
+      });
 
       PathChain myPath = follower
          .pathBuilder()
@@ -102,43 +100,17 @@ public class AutoBlueTurret extends LinearOpMode {
                new Pose(20.000, 60.200),
                new Pose(50.000, 82.500)
             )
-         ).setConstantHeadingInterpolation(Math.toRadians(180))
-
-         .addPath(
-            new BezierLine(
-               new Pose(50.00, 60.200),
-               new Pose(47.534, 36.702)
-            )
-         ).setConstantHeadingInterpolation(Math.toRadians(180))
-
+         )
+         .setConstantHeadingInterpolation(Math.toRadians(180))
          .build();
 
       follower.followPath(myPath.getPath(pathState));
-      mechanisms.setTurretTicks(-550);
-      mechanisms.pipelineSwitch(RobotConstants.Mechanisms.Vision.motifPipelineIndex);
+      mechanisms.setTurretTicks(-283);
       waitForStart();
       while (opModeIsActive()) {
          if (!follower.isBusy()) {
-            if (pathState == 0) {
-               if (!motifUpdated) {
-                  targetMotif = Motif.getMotif(mechanisms.getId());
-                  mechanisms.pipelineSwitch(RobotConstants.Mechanisms.Vision.blueAllianceGoalPipelineIndex);
-                  mechanisms.setTurretTicks(-285);
-               }
-               while (mechanisms.isTurretBusy()){
-                  mechanisms.setTurretTicks(-285);
-               } ;
-               while (!mechanisms.isTurretAligned()) {
-                  mechanisms.update();
-                  mechanisms.startShooter();
-               }
-               while (!mechanisms.shoot(targetMotif)) {
-                  mechanisms.update();
-               }
-               mechanisms.startIntake();
-            }
             if (pathState == 0 || pathState == 3 || pathState == 6 || pathState == 9) {
-               while (!mechanisms.isTurretAligned() || mechanisms.isTurretBusy()) {
+               while (mechanisms.getTurnValue() != 0) {
                   mechanisms.update();
                   mechanisms.startShooter();
                }
@@ -159,17 +131,6 @@ public class AutoBlueTurret extends LinearOpMode {
             }
          } else {
             if (pathState == 0) {
-               if ((mechanisms.getId()!=21 || mechanisms.getId()!=22 || mechanisms.getId()!= 23) && !motifUpdated) {
-                  mechanisms.setTurretTicks(-550);
-                  targetMotif = Motif.getMotif(mechanisms.getId());
-                  telemetry.addData("no value","recieved yet");
-               } else {
-                  targetMotif = Motif.getMotif(mechanisms.getId());
-                  telemetry.addData("motif","read");
-                  motifUpdated = true;
-                  //mechanisms.setTurretTicks(-285);
-                  mechanisms.pipelineSwitch(RobotConstants.Mechanisms.Vision.blueAllianceGoalPipelineIndex);
-               }
                mechanisms.readyToShoot(targetMotif);
                mechanisms.rampUpShooter();
             }
@@ -182,22 +143,24 @@ public class AutoBlueTurret extends LinearOpMode {
 
             if (pathState == 3 || pathState == 6 || pathState == 9) {
                if (follower.getCurrentTValue() < 0.4) {
-                  mechanisms.readyToShoot(targetMotif);
-               } else if (mechanisms.getNoOfArtifacts() < 3) {
-                  mechanisms.startIntake();
+                  if (mechanisms.getNoOfArtifacts() < 3) {
+                     mechanisms.startIntake();
+                  }else{
+                     mechanisms.reverseIntake();
+                  }
+
                } else {
-                  mechanisms.reverseIntake();
+                  mechanisms.readyToShoot(targetMotif);
                }
                mechanisms.rampUpShooter();
             }
          }
          telemetry.addData("State: ", mechanisms.getState());
          telemetry.addData("Pose", follower.getPose().toString());
-         telemetry.addData("Motif", targetMotif[0]+","+targetMotif[1]+","+targetMotif[2]);
          telemetry.update();
          mechanisms.update();
          follower.update();
       }
    }
-
 }
+

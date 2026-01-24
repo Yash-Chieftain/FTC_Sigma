@@ -15,11 +15,11 @@ import org.firstinspires.ftc.teamcode.RobotConstants;
 import org.firstinspires.ftc.teamcode.Utils.Artifact;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-
 @Configurable
 @TeleOp
+
 public class BlueTeleOp extends LinearOpMode {
-   public static double kp = 0.02;
+   public static double kp = 0.2;
    double maxPower = RobotConstants.TeleOp.maxPower;
    double turnSensitivity = RobotConstants.TeleOp.turnSensitivity;
    TelemetryManager telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -40,7 +40,6 @@ public class BlueTeleOp extends LinearOpMode {
       double y = 0, x = 0, rx = 0;
       follower = Constants.createFollower(hardwareMap);
       mechanisms = new Mechanisms(hardwareMap);
-      mechanisms.pipelineSwitch(RobotConstants.Mechanisms.Vision.blueAllianceGoalPipelineIndex);
       waitForStart();
       // Above is INIT
 
@@ -60,7 +59,7 @@ public class BlueTeleOp extends LinearOpMode {
             x = x * -1;
             rx = rx * -1;
          } else if (gamepad1.right_bumper) {
-            maxPower = 0.4;
+            maxPower = 0;
          }else {
             maxPower = 1;
          }
@@ -79,21 +78,16 @@ public class BlueTeleOp extends LinearOpMode {
             rx = -mechanisms.getTurnValue();
          } else if (Math.abs(rx) < 0.01 && (Math.abs(x) > 0.01 || Math.abs(y) > 0.01)) {
             if (!isStrafeStarted) {
-               heading = follower.getHeading();
+               heading = Math.toRadians(follower.getHeading());
                isStrafeStarted = true;
             }
-            double error = heading - follower.getHeading();
+            double error = heading - Math.toRadians(follower.getHeading());
             rx = error * kp;
 
          } else {
             isStrafeStarted = false;
          }
-         while (gamepad1.dpad_up){
-         }
 
-         if (gamepad1.aWasPressed()){
-            follower.breakFollowing();
-         }
 
          if (gamepad1.y) {
             mechanisms.park();
@@ -118,7 +112,7 @@ public class BlueTeleOp extends LinearOpMode {
 //            e++;
 //         }
 //         System.out.println(numberOfArtifacts);
-         //FAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+
 
          if (gamepad2.left_bumper) {
             mechanisms.startIntake();
@@ -131,9 +125,17 @@ public class BlueTeleOp extends LinearOpMode {
 
          if (gamepad2.right_bumper) {
             mechanisms.startShooter();
-         } else {
+         } else if (gamepad2.right_trigger>0.5) {
+            mechanisms.startLongshooter();
+         }
+         else {
             mechanisms.stopShooter();
          }
+
+         if(gamepad1.dpadUpWasPressed()){
+            mechanisms.resetturret();
+         }
+
          if (gamepad2.dpadUpWasPressed()) {
             numberOfArtifacts += 1;
          } else if (gamepad2.dpadDownWasPressed()) {
@@ -146,7 +148,6 @@ public class BlueTeleOp extends LinearOpMode {
          if (gamepad2.x) {
             mechanisms.shoot(pattern);
          }
-
 
          if (gamepad2.yWasPressed()) {
             mechanisms.setSpinIndexerState(new Artifact[]{Artifact.EMPTY, Artifact.EMPTY, Artifact.EMPTY});
@@ -161,7 +162,11 @@ public class BlueTeleOp extends LinearOpMode {
          telemetryManager.addData("getTx", mechanisms.getTurnValue());
          telemetryManager.addData("Sequence: ", mechanisms.getShootingSequenceString(pattern));
          telemetryManager.addData("Target Velo: ", mechanisms.getTargetVelocity());
-         telemetryManager.addData("hoodposition", hoodPosition);
+         telemetryManager.addData("hoodposition", mechanisms.getHoodPosition());
+         telemetryManager.addData("headi" +
+            "\ng: ", heading);
+         telemetryManager.addData("current heading: ", follower.getHeading());
+         telemetryManager.addData("rx", rx);
          telemetryManager.update(telemetry);
          mechanisms.update();
 

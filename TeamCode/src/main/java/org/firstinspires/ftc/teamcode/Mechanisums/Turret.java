@@ -8,35 +8,33 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 @Configurable
 public class Turret {
-    public static double MAX_DEGREES = 300;
-    public static double TICKS_PER_REV = 537.6;
-    public static double GEAR_RATIO = 1.0;
-    public static double MOTOR_POWER = 0.3;
+   public static double MAX_DEGREES = 300;
+   public static double TICKS_PER_REV = 537.6;
+   public static double GEAR_RATIO = 1.0;
+   public static double MOTOR_POWER = 0.3;
+   public static int turretPosition = 0;
+   public static double kp = 0.017;
+   public static double kd = 0.025;
+   public static double maxPower = 0.5;
+   public static double turretInitPower = 0.3;
+   public static double turretOffset = 0;
+   double minticklimit = -500;
+   double maxtickslimit = 500;
+   int turretZero = 0;
+   private DcMotorEx turretMotor;
+   private DigitalChannel magneticSensor;
+   private double targetDegrees = 0;
+   // PD state
+   private double lastError = 0;
 
-    public static double kp = 0.017;
-    public static double kd = 0.025;
-    public static double maxPower = 0.5;
-    public static double turretInitPower = 0.3;
-    public static double turretOffset = 2;
-
-
-    private DcMotorEx turretMotor;
-    private DigitalChannel magneticSensor;
-    private double targetDegrees = 0;
-    // PD state
-    private double lastError = 0;
-    double minticklimit = -500;
-    double maxtickslimit = 500;
-
-
-    public Turret(HardwareMap hardwareMap) {
-        turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
-        turretMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        turretMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        turretMotor.setPower(0);
-        magneticSensor = hardwareMap.get(DigitalChannel.class, "magneticSensor");
-        magneticSensor.setMode(DigitalChannel.Mode.INPUT);
+   public Turret(HardwareMap hardwareMap) {
+      turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
+      turretMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+      turretMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+      turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      turretMotor.setPower(0);
+      magneticSensor = hardwareMap.get(DigitalChannel.class, "magneticSensor");
+      magneticSensor.setMode(DigitalChannel.Mode.INPUT);
 //        while (!magneticSensor.getState()) {
 //            turretMotor.setPower(turretInitPower);
 //        }
@@ -45,83 +43,98 @@ public class Turret {
 //            turretMotor.setPower(-turretInitPower);
 //        }
 //        minticklimit = turretMotor.getCurrentPosition();
-    }
+      turretZero -= turretPosition;
+   }
 
+   public static void updateTurretPosition(int position) {
+      turretPosition = position;
+   }
 
-    public void update() {
-        int targetTicks = degreesToTicks(targetDegrees);
+   public void update() {
+      int targetTicks = degreesToTicks(targetDegrees);
 
-        turretMotor.setTargetPosition(targetTicks);
-        turretMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        turretMotor.setPower(MOTOR_POWER);
-    }
+      turretMotor.setTargetPosition(targetTicks);
+      turretMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+      turretMotor.setPower(MOTOR_POWER);
+   }
 
-    public void setTargetDegrees(double deg) {
-        targetDegrees = wrapDegrees(deg);
-    }
+   public void setTargetDegrees(double deg) {
+      targetDegrees = wrapDegrees(deg);
+   }
 
-    public int degreesToTicks(double deg) {
-        return (int) ((deg / 360.0) * TICKS_PER_REV * GEAR_RATIO);
-    }
+   public int degreesToTicks(double deg) {
+      return (int) ((deg / 360.0) * TICKS_PER_REV * GEAR_RATIO);
+   }
 
-    public double getCurrentDegrees() {
-        int ticks = turretMotor.getCurrentPosition();
-        return (ticks / (TICKS_PER_REV * GEAR_RATIO)) * 360.0;
-    }
+   public double getCurrentDegrees() {
+      int ticks = turretMotor.getCurrentPosition();
+      return (ticks / (TICKS_PER_REV * GEAR_RATIO)) * 360.0;
+   }
 
-    public double getTicks() {
-        return turretMotor.getCurrentPosition();
-    }
+   public double getTicks() {
+      return turretMotor.getCurrentPosition();
+   }
 
+   public void setTurretTicks(int ticks) {
+      turretMotor.setTargetPosition(ticks);
+      turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      turretMotor.setPower(maxPower);
+   }
 
-    public void setTurretTicks(int ticks){
-        turretMotor.setTargetPosition(ticks);
-        turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        turretMotor.setPower(maxPower);
-    }
+   public boolean isBusy() {
+      return turretMotor.isBusy();
+   }
 
-    public void alignLimeLight(double tx) {
-        double error = tx + turretOffset;
-        double derivative = error - lastError;
+   public boolean isAligned(double tx) {
+      return Math.abs(tx + turretOffset) < 1 ;
+   }
 
-        double power = (kp * error) + (kd * derivative);
+   public double alignLimeLight(double tx) {
+      double error = tx + turretOffset;
+      double derivative = error - lastError;
 
-        power = (Math.max(-maxPower, Math.min(maxPower, power)));
-        if(!turretMotor.isBusy()){
-            turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+      double power = (kp * error) + (kd * derivative);
 
-        if (power > 0) {
-            if (turretMotor.getCurrentPosition() < minticklimit) {
-                turretMotor.setPower(0);
-                return;
-            }
-        } else if (power < 0) {
-            if (turretMotor.getCurrentPosition() > maxtickslimit) {
-                turretMotor.setPower(0);
-                return;
-            }
+      power = (Math.max(-maxPower, Math.min(maxPower, power)));
+      if (!turretMotor.isBusy()) {
+         turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      }
 
-        }
+      if (power > 0) {
+         if (turretMotor.getCurrentPosition() + turretZero < minticklimit) {
+            turretMotor.setPower(0);
+            return 0;
+         }
+      } else if (power < 0) {
+         if (turretMotor.getCurrentPosition() + turretZero > maxtickslimit) {
+            turretMotor.setPower(0);
+            return 0;
+         }
 
-        turretMotor.setPower(-power);
-        lastError = error;
-    }
+      }
 
-    public void setPower(double power){
-        turretMotor.setPower(power);
-    }
+      turretMotor.setPower(-power);
+      lastError = error;
+      return power;
+   }
 
-    public double wrapDegrees(double deg) {
-        deg %= MAX_DEGREES;
-        if (deg < 0) deg += MAX_DEGREES;
-        return deg;
-    }
+   public void setPower(double power) {
+      turretMotor.setPower(power);
+   }
 
-    public void stop() {
-        turretMotor.setPower(0);
-        lastError = 0;
-    }
+   public double wrapDegrees(double deg) {
+      deg %= MAX_DEGREES;
+      if (deg < 0) deg += MAX_DEGREES;
+      return deg;
+   }
 
+   public void stop() {
+      turretMotor.setPower(0);
+      lastError = 0;
+   }
+
+   public void reset() {
+      this.setTurretTicks(turretZero);
+   }
 
 }

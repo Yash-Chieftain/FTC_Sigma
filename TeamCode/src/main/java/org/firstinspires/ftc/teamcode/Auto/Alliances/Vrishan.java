@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto.BossBotix;
+package org.firstinspires.ftc.teamcode.Auto.Alliances;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
 @Autonomous
-public class BossBotixAllianceBlueNear extends LinearOpMode {
+public class Vrishan extends LinearOpMode {
    public static double intakeDriveSpeed = 0.29;
    Follower follower;
    int pathState = 0;
@@ -42,66 +42,81 @@ public class BossBotixAllianceBlueNear extends LinearOpMode {
          // Path1
          .addPath(
             new BezierLine(
-               new Pose(34.340, 135.955),
-               new Pose(54.000, 83.500)
+               new Pose(35.300, 135.978),
+
+               new Pose(56.006, 84.404)
             )
-         )
-         .setConstantHeadingInterpolation(Math.toRadians(180))
+         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
          // Path2
          .addPath(
             new BezierLine(
-               new Pose(50.000, 83.500),
-               new Pose(42.000, 83.500)
+               new Pose(56.006, 84.404),
+
+               new Pose(45.729, 59.766)
             )
-         )
-         .setConstantHeadingInterpolation(Math.toRadians(180))
+         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
 
          // Path3
          .addPath(
             new BezierLine(
-               new Pose(42.000, 83.500),
-               new Pose(20.000, 83.500)
-            )
-         )
-         .setTangentHeadingInterpolation()
+               new Pose(45.729, 59.766),
 
+               new Pose(20.418, 60.170)
+            )
+         ).setTangentHeadingInterpolation()
          // Path4
          .addPath(
             new BezierLine(
-               new Pose(20.000, 83.500),
-               new Pose(50.000, 83.500)
-            )
-         )
-         .setConstantHeadingInterpolation(Math.toRadians(180))
+               new Pose(20.418, 60.170),
 
+               new Pose(20.340, 69.446)
+            )
+         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
          // Path5
          .addPath(
-            new BezierCurve(
-               new Pose(50.000, 83.500),
-               new Pose(65.100, 57.552),
-               new Pose(42.000, 60.200)
+            new BezierLine(
+               new Pose(20.418, 60.170),
+
+               new Pose(20.340, 69.446)
             )
-         )
-         .setConstantHeadingInterpolation(Math.toRadians(180))
+         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
 
          // Path6
          .addPath(
-            new BezierLine(
-               new Pose(42.000, 60.200),
-               new Pose(20.000, 60.200)
+            new BezierCurve(
+               new Pose(11.713, 70.435),
+               new Pose(38.733, 57.600),
+               new Pose(55.724, 83.696)
             )
-         )
-         .setTangentHeadingInterpolation()
+         ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
 
          // Path7
          .addPath(
             new BezierLine(
-               new Pose(20.000, 60.200),
-               new Pose(50.000, 82.500)
+               new Pose(55.724, 83.696),
+
+               new Pose(21.058, 84.357)
             )
-         )
-         .setConstantHeadingInterpolation(Math.toRadians(180))
+         ).setTangentHeadingInterpolation()
+
+         //Path8
+         .addPath(
+            new BezierLine(
+               new Pose(21.058, 84.357),
+
+               new Pose(55.646, 83.323)
+            )
+         ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+         //Path 9
+         .addPath(
+            new BezierLine(
+               new Pose(55.646, 83.323),
+
+               new Pose(17.471, 83.671)
+            )
+         ).setTangentHeadingInterpolation()
          .build();
 
       follower.followPath(myPath.getPath(pathState));
@@ -109,7 +124,7 @@ public class BossBotixAllianceBlueNear extends LinearOpMode {
       waitForStart();
       while (opModeIsActive()) {
          if (!follower.isBusy()) {
-            if (pathState == 0 || pathState == 3 || pathState == 6 || pathState == 9) {
+            if (pathState == 0 || pathState == 5 || pathState == 7) {
                while (mechanisms.getTurnValue() != 0) {
                   mechanisms.update();
                   mechanisms.startShooter();
@@ -117,14 +132,16 @@ public class BossBotixAllianceBlueNear extends LinearOpMode {
                while (!mechanisms.shoot(targetMotif)) {
                   mechanisms.update();
                }
-               mechanisms.startIntake();
+               if (pathState == 0 || pathState == 5){mechanisms.startIntake();}
             }
             pathState++;
-            if (pathState == 1 || pathState == 4 || pathState == 7) {
+            if (pathState == 1 || pathState == 6 || pathState == 8) {
                follower.followPath(new PathChain(myPath.getPath(pathState)), false);
-            } else if (pathState == 2 || pathState == 5 || pathState == 8) {
+            } else if (pathState == 2 || pathState == 6 || pathState == 8) {
                follower.followPath(new PathChain(myPath.getPath(pathState)), intakeDriveSpeed, true);
-            } else if (pathState == 3 || pathState == 6 || pathState == 9) {
+            } else if (pathState == 4 || pathState == 3){
+               sleep(2000);
+            } else if (pathState == 2 || pathState == 6 || pathState == 5) {
                follower.followPath(new PathChain(PedroUtils.getPath(follower.getPose(), myPath.getPath(pathState).endPose())));
             } else {
                follower.followPath(myPath.getPath(pathState));
@@ -134,24 +151,23 @@ public class BossBotixAllianceBlueNear extends LinearOpMode {
                mechanisms.readyToShoot(targetMotif);
                mechanisms.rampUpShooter();
             }
-            if (pathState == 2 || pathState == 5 || pathState == 8) {
+            if (pathState == 2 || pathState == 6 || pathState == 8) {
                mechanisms.startIntake();
                if (mechanisms.getNoOfArtifacts() >= 3) {
                   follower.breakFollowing();
                }
             }
 
-            if (pathState == 3 || pathState == 6 || pathState == 9) {
-               if (follower.getCurrentTValue() < 0.4) {
-                  if (mechanisms.getNoOfArtifacts() < 3) {
-                     mechanisms.startIntake();
-                  }else{
-                     mechanisms.reverseIntake();
-                  }
 
-               } else {
+            if (pathState == 4 || pathState == 6) {
+               if(follower.getCurrentTValue() < 0.4){
                   mechanisms.readyToShoot(targetMotif);
+               }else if (mechanisms.getNoOfArtifacts() < 3) {
+                  mechanisms.startIntake();
+               }else{
+                  mechanisms.reverseIntake();
                }
+
                mechanisms.rampUpShooter();
             }
          }
@@ -163,4 +179,3 @@ public class BossBotixAllianceBlueNear extends LinearOpMode {
       }
    }
 }
-
