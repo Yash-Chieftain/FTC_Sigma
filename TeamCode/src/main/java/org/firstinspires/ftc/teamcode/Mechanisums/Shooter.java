@@ -155,7 +155,7 @@ public class Shooter {
    }
 
    public double getHoodAngleByDistance(double distance) {
-      return (distance - 33) * 0.0038;
+      return (distance - 33) * 0.0038 + 50;
    }
 
    public double[] getShooterValuesPiecewise(double d) {
