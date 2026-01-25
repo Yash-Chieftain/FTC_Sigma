@@ -299,6 +299,9 @@ public class Mechanisms {
 
    //Turret
 
+   public void setTurretOffset(double offset){
+      Turret.setTurretOffset(offset);
+   }
    public void setTurretTicks(int ticks) {
       turret.setTurretTicks(ticks);
    }
@@ -324,7 +327,6 @@ public class Mechanisms {
 
       shooter.setShooter(vision.getDistance());
       vision.update();
-
       if (vision.update() && Math.abs(Turret.turretOffset - vision.getTx()) > 1) {
          turret.alignLimeLight(vision.getTx());
       } else {

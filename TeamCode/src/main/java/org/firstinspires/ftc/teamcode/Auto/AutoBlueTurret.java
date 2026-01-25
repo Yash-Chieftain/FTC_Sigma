@@ -116,6 +116,7 @@ public class AutoBlueTurret extends LinearOpMode {
       follower.followPath(myPath.getPath(pathState));
       mechanisms.setTurretTicks(-550);
       mechanisms.pipelineSwitch(RobotConstants.Mechanisms.Vision.motifPipelineIndex);
+
       waitForStart();
       while (opModeIsActive()) {
          if (!follower.isBusy()) {

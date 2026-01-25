@@ -128,6 +128,10 @@ public class Turret {
       return deg;
    }
 
+   public static void setTurretOffset(double offset){
+      turretOffset = offset;
+   }
+
    public void stop() {
       turretMotor.setPower(0);
       lastError = 0;

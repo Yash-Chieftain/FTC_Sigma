@@ -14,11 +14,11 @@ import org.firstinspires.ftc.teamcode.Utils.Wait;
 public class Shooter {
    public static double kp = 250;
    public static double ki = 0;
-   public static double kd = 0;
+   public static double kd = 10;
    public static double kf = 20.2;
    public static long shootDelay = 150;
    public static double shootPosition = 0.700;
-   public static double longshootpos = 0.8;
+   public static double longshootpos = 0.9;
    public static double shortshootpos = 0.08;
    public static double divideShootTime = 1;
    public static double longvelocity = 1430;
