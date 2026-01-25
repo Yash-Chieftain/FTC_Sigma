@@ -127,7 +127,6 @@ public class AutoBlueFarTurret extends LinearOpMode {
                 .build();
         mechanisms.pipelineSwitch(RobotConstants.Mechanisms.Vision.motifPipelineIndex);
         mechanisms.setTurretTicks(-550);
-        mechanisms.setTurretOffset(-2);
         waitForStart();
         while (opModeIsActive()) {
             if (!follower.isBusy()) {

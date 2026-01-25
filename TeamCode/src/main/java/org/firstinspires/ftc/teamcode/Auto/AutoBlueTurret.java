@@ -114,32 +114,14 @@ public class AutoBlueTurret extends LinearOpMode {
          .build();
 
       follower.followPath(myPath.getPath(pathState));
-      mechanisms.setTurretTicks(-550);
+      mechanisms.setTurretTicks(-283);
       mechanisms.pipelineSwitch(RobotConstants.Mechanisms.Vision.motifPipelineIndex);
 
       waitForStart();
       while (opModeIsActive()) {
          if (!follower.isBusy()) {
-            if (pathState == 0) {
-               if (!motifUpdated) {
-                  targetMotif = Motif.getMotif(mechanisms.getId());
-                  mechanisms.pipelineSwitch(RobotConstants.Mechanisms.Vision.blueAllianceGoalPipelineIndex);
-                  mechanisms.setTurretTicks(-285);
-               }
-               while (mechanisms.isTurretBusy()){
-                  mechanisms.setTurretTicks(-285);
-               } ;
-               while (!mechanisms.isTurretAligned()) {
-                  mechanisms.update();
-                  mechanisms.startShooter();
-               }
-               while (!mechanisms.shoot(targetMotif)) {
-                  mechanisms.update();
-               }
-               mechanisms.startIntake();
-            }
             if (pathState == 0 || pathState == 3 || pathState == 6 || pathState == 9) {
-               while (!mechanisms.isTurretAligned() || mechanisms.isTurretBusy()) {
+               while (mechanisms.getTurnValue() != 0) {
                   mechanisms.update();
                   mechanisms.startShooter();
                }
@@ -153,24 +135,13 @@ public class AutoBlueTurret extends LinearOpMode {
                follower.followPath(new PathChain(myPath.getPath(pathState)), false);
             } else if (pathState == 2 || pathState == 5 || pathState == 8) {
                follower.followPath(new PathChain(myPath.getPath(pathState)), intakeDriveSpeed, true);
-            } else if (pathState == 3 || pathState == 6 || pathState == 9) {
+            } else if (pathState == 3|| pathState == 6|| pathState == 9) {
                follower.followPath(new PathChain(PedroUtils.getPath(follower.getPose(), myPath.getPath(pathState).endPose())));
             } else {
                follower.followPath(myPath.getPath(pathState));
             }
          } else {
-            if (pathState == 0) {
-               if ((mechanisms.getId()!=21 || mechanisms.getId()!=22 || mechanisms.getId()!= 23) && !motifUpdated) {
-                  mechanisms.setTurretTicks(-550);
-                  targetMotif = Motif.getMotif(mechanisms.getId());
-                  telemetry.addData("no value","recieved yet");
-               } else {
-                  targetMotif = Motif.getMotif(mechanisms.getId());
-                  telemetry.addData("motif","read");
-                  motifUpdated = true;
-                  //mechanisms.setTurretTicks(-285);
-                  mechanisms.pipelineSwitch(RobotConstants.Mechanisms.Vision.blueAllianceGoalPipelineIndex);
-               }
+            if(pathState == 0){
                mechanisms.readyToShoot(targetMotif);
                mechanisms.rampUpShooter();
             }
@@ -182,19 +153,15 @@ public class AutoBlueTurret extends LinearOpMode {
             }
 
             if (pathState == 3 || pathState == 6 || pathState == 9) {
-               if (follower.getCurrentTValue() < 0.4) {
-                  mechanisms.readyToShoot(targetMotif);
-               } else if (mechanisms.getNoOfArtifacts() < 3) {
+               if (follower.getCurrentTValue() < 0.4 && !(mechanisms.getNoOfArtifacts() < 3)) {
                   mechanisms.startIntake();
                } else {
-                  mechanisms.reverseIntake();
+                  mechanisms.readyToShoot(targetMotif);
                }
                mechanisms.rampUpShooter();
             }
          }
          telemetry.addData("State: ", mechanisms.getState());
-         telemetry.addData("Pose", follower.getPose().toString());
-         telemetry.addData("Motif", targetMotif[0]+","+targetMotif[1]+","+targetMotif[2]);
          telemetry.update();
          mechanisms.update();
          follower.update();
